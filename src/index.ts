@@ -90,7 +90,6 @@ async function load (ctx: PluginContext, file: string, symbolIdGen: SymbolIdGene
 }
 
 // todo: generate code for react, vue, plain dom
-// todo: make svg's viewport match symbol's viewport
 function generateQuickCode (xml: any) {
   const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
   const html = JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
@@ -99,15 +98,16 @@ function generateQuickCode (xml: any) {
     import { h } from 'preact'
 
     export default function () {
-      return h('svg', { dangerouslySetInnerHTML: { __html: ${html} } })
+      return h('svg', { viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${html} } })
     }
   `
 }
 
-function generateCode (symbol: string) {
+// todo: make svg's viewport match symbol's viewport
+function generateCode (viewBox: string, symbol: string) {
   return `
     import { h } from 'preact'
-    export default () => h('svg', null, h('use', { href: ${symbol} }))
+    export default () => h('svg', { viewBox: '${viewBox}' }, h('use', { href: ${symbol} }))
   `
 }
 
@@ -140,6 +140,7 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
 
   const assets = new Map<string, SvgAsset>()
   const loaded = new Map<string, any>()
+  const viewBoxes = new Map<string, string>()
   const symbolIds = new Map<string, string>()
   const files = new Map<string, string>()
   const output = new Map<string, string>()
@@ -176,6 +177,7 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
       if (!url.pathname.endsWith('.svg')) return null
 
       const [ raw, xml, imports ] = await load(this, url.pathname, config.symbolId || (() => Math.random().toString(16).slice(2, 10)))
+      viewBoxes.set(id, xml.svg.$.viewBox)
       if (url.searchParams.has('file') || serve) {
         assets.set(id, { sources: [], xml: xml })
       } else {
@@ -222,11 +224,11 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
 
       const symbolId = symbolIds.get(id)!
       if (assetId === 'inline') {
-        return [ preamble, generateCode(`'#${symbolId}'`) ].join('\n')
+        return [ preamble, generateCode(viewBoxes.get(id)!, `'#${symbolId}'`) ].join('\n')
       }
 
       sprites.set(symbolId, assetId)
-      return [ preamble, generateCode(`__MAGICAL_SVG_SPRITE__${symbolId}__`) ].join('\n')
+      return [ preamble, generateCode(viewBoxes.get(id)!, `__MAGICAL_SVG_SPRITE__${symbolId}__`) ].join('\n')
     },
     renderChunk (code) {
       let match
