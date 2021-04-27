@@ -36,6 +36,12 @@ import MagicString from 'magic-string'
 
 // todo: optional optimization with svgo
 
+type SymbolIdGenerator = (file: string) => string | null | void
+export type MagicalSvgConfig = {
+  symbolId?: SymbolIdGenerator,
+  svgo?: boolean
+}
+
 type SvgAsset = { sources: string[], xml: any }
 type AssetName = NonNullable<OutputOptions['assetFileNames']>
 
@@ -59,7 +65,7 @@ async function transformRefs (xml: any, fn: (ref: any) => Promise<string | null>
   }
 }
 
-async function load (ctx: PluginContext, file: string): Promise<[ string, any, string[] ]> {
+async function load (ctx: PluginContext, file: string, symbolIdGen: SymbolIdGenerator): Promise<[ string, any, string[] ]> {
   const imports: string[] = []
   const raw = await readFile(file, 'utf8')
   const xml = await parseXml(raw)
@@ -76,8 +82,7 @@ async function load (ctx: PluginContext, file: string): Promise<[ string, any, s
 
   if (typeof xml.svg !== 'object') xml.svg = { _: xml.svg }
   xml.svg.$ = xml.svg.$ ?? {}
-  // todo: configurable id gen
-  xml.svg.$.id = Math.random().toString(16).slice(2, 10)
+  xml.svg.$.id = symbolIdGen(file)
   delete xml.svg.$.width
   delete xml.svg.$.height
 
@@ -128,7 +133,7 @@ function generateFilename (template: AssetName, file: string, raw: string) {
   })
 }
 
-export default function (): Plugin {
+export default function (config: MagicalSvgConfig = {}): Plugin {
   let fileName: AssetName = 'assets/[name].[hash].[ext]'
   let sourcemap = false
   let serve = false
@@ -170,7 +175,7 @@ export default function (): Plugin {
       const url = new URL(id, 'file:///')
       if (!url.pathname.endsWith('.svg')) return null
 
-      const [ raw, xml, imports ] = await load(this, url.pathname)
+      const [ raw, xml, imports ] = await load(this, url.pathname, config.symbolId || (() => Math.random().toString(16).slice(2, 10)))
       if (url.searchParams.has('file') || serve) {
         assets.set(id, { sources: [], xml: xml })
       } else {
