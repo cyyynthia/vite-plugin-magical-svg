@@ -1,0 +1,250 @@
+/*
+ * Copyright (c) 2021 Cynthia K. Rey, All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+import type { Plugin } from 'vite'
+import type { PluginContext, OutputOptions } from 'rollup'
+import { URL } from 'url'
+import { createHash } from 'crypto'
+import { readFile } from 'fs/promises'
+import { basename, extname, relative } from 'path'
+import { Builder, parseStringPromise as parseXml } from 'xml2js'
+import MagicString from 'magic-string'
+
+// todo: optional optimization with svgo
+// todo: inline svg at the top of the html document
+
+type SvgAsset = { sources: string[], xml: any }
+type AssetName = NonNullable<OutputOptions['assetFileNames']>
+
+const ASSET_RE = /__MAGICAL_SVG_SPRITE__([0-9a-f]{8})__/g
+
+async function transformRefs (xml: any, fn: (ref: any) => Promise<string | null>) {
+  if (typeof xml !== 'object') return
+
+  for (const tag in xml) {
+    if (tag in xml && tag !== '$') {
+      for (const element of xml[tag]) {
+        // todo: match all possible references
+        if (tag === 'image' && element.$?.href) {
+          const ref = await fn(element.$.href)
+          if (ref) element.$.href = ref
+        }
+
+        await transformRefs(element, fn)
+      }
+    }
+  }
+}
+
+async function load (ctx: PluginContext, file: string): Promise<[ string, any, string[] ]> {
+  const imports: string[] = []
+  const raw = await readFile(file, 'utf8')
+  const xml = await parseXml(raw)
+  if (!('svg' in xml)) throw new Error('invalid svg: top level xml element isn\'t an svg')
+
+  await transformRefs(xml.svg, async (ref) => {
+    const resolved = await ctx.resolve(ref, file)
+    if (resolved?.id && !imports.includes(resolved.id)) {
+      imports.push(resolved.id)
+    }
+
+    return resolved?.id ?? null
+  })
+
+  if (typeof xml.svg !== 'object') xml.svg = { _: xml.svg }
+  xml.svg.$ = xml.svg.$ ?? {}
+  // todo: configurable id gen
+  xml.svg.$.id = Math.random().toString(16).slice(2, 10)
+  delete xml.svg.$.width
+  delete xml.svg.$.height
+
+  return [ raw, xml, imports ]
+}
+
+// todo: generate code for react, vue, plain dom
+function generateQuickCode (xml: any) {
+  const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
+  const html = JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
+
+  return `
+    import { h } from 'preact'
+
+    export default function () {
+      return h('svg', { dangerouslySetInnerHTML: { __html: ${html} } })
+    }
+  `
+}
+
+function generateCode (symbol: string) {
+  return `
+    import { h } from 'preact'
+    export default () => h('svg', null, h('use', { href: ${symbol} }))
+  `
+}
+
+function generateFilename (template: AssetName, file: string, raw: string) {
+  if (typeof template === 'string') {
+    const ext = extname(file)
+    const name = basename(file, ext)
+    const hash = template.includes('[hash]') // only compute hash when needed
+      ? createHash('sha256').update(raw).digest('hex').slice(0, 8)
+      : ''
+
+    return template
+      .replace(/\[name\]/g, name)
+      .replace(/\[extname\]/g, ext)
+      .replace(/\[ext\]/g, ext.slice(1))
+      .replace(/\[hash\]/g, hash)
+  }
+
+  return template({
+    type: 'asset',
+    source: raw,
+    name: file
+  })
+}
+
+export default function (): Plugin {
+  let fileName: AssetName = 'assets/[name].[hash].[ext]'
+  let sourcemap = false
+  let serve = false
+
+  const assets = new Map<string, SvgAsset>()
+  const loaded = new Map<string, any>()
+  const symbolIds = new Map<string, string>()
+  const files = new Map<string, string>()
+  const output = new Map<string, string>()
+  const sprites = new Map<string, string>()
+
+  return {
+    name: 'vite-plugin-magical-svg',
+    enforce: 'pre',
+    configResolved (cfg) {
+      sourcemap = Boolean(cfg.build.sourcemap)
+      const { output } = cfg.build.rollupOptions
+
+      if (cfg.command === 'serve') {
+        serve = true
+        fileName = (info) => relative(cfg.root, info.name!)
+      } else if (output && !Array.isArray(output) && output.assetFileNames) {
+        fileName = output.assetFileNames
+      }
+    },
+    async load (id) {
+      const url = new URL(id, 'file:///')
+      if (!url.pathname.endsWith('.svg')) return null
+
+      const [ raw, xml, imports ] = await load(this, url.pathname)
+      if (url.searchParams.has('file') || serve) {
+        assets.set(id, { sources: [], xml: xml })
+      } else {
+        const spriteId = url.searchParams.get('sprite') ?? 'sprite'
+        const sprite = assets.get(spriteId) ?? {
+          sources: [],
+          xml: {
+            svg: {
+              $: { width: 0, height: 0 },
+              symbol: []
+            }
+          }
+        }
+
+        if (!assets.has(spriteId)) assets.set(spriteId, sprite)
+        sprite.xml.svg.symbol.push(xml.svg)
+        sprite.sources.push(raw)
+        symbolIds.set(id, xml.svg.$.id)
+      }
+
+      loaded.set(id, xml)
+      const imp = imports.map((i) => `import ${JSON.stringify(i)};`).join('\n')
+      const file = generateFilename(fileName, url.pathname, raw)
+      return `${imp}\nexport default ${JSON.stringify(`/${file}`)}`
+    },
+    async transform (code, id) {
+      const url = new URL(id, 'file:///')
+      if (!url.pathname.endsWith('.svg')) return null
+      const assetId = url.searchParams.has('file') ? id : url.searchParams.get('sprite') ?? 'sprite'
+
+      const exportIndex = code.indexOf('export default')
+      if (url.searchParams.has('file')) {
+        const file = code.slice(exportIndex + 16, -1)
+        files.set(assetId, file.slice(1))
+        output.set(id, file)
+        return null
+      }
+
+      const preamble = code.slice(0, exportIndex)
+      if (serve) {
+        const asset = assets.get(id)!
+        return [ preamble, generateQuickCode(asset.xml) ].join('\n')
+      }
+
+      const symbolId = symbolIds.get(id)!
+      sprites.set(symbolId, assetId)
+      return [ preamble, generateCode(`__MAGICAL_SVG_SPRITE__${symbolId}__`) ].join('\n')
+    },
+    renderChunk (code) {
+      let match
+      let magicString
+      while ((match = ASSET_RE.exec(code))) {
+        magicString = magicString || (magicString = new MagicString(code))
+        const assetId = sprites.get(match[1])!
+        const asset = assets.get(assetId)!
+        const file = generateFilename(fileName, `${assetId}.svg`, asset.sources.join(''))
+        files.set(assetId, file)
+
+        magicString.overwrite(
+          match.index,
+          match.index + match[0].length,
+          JSON.stringify(`/${file}#${match[1]}`)
+        )
+      }
+
+      if (!magicString) return null
+
+      return {
+        code: magicString.toString(),
+        map: sourcemap ? magicString.generateMap({ hires: true }) : null
+      }
+    },
+    async generateBundle () {
+      for (const assetId of assets.keys()) {
+        const asset = assets.get(assetId)!
+        await transformRefs(asset.xml.svg, async (ref) => `/${output.get(ref)}` ?? null)
+
+        const builder = new Builder()
+        const xml = builder.buildObject(asset.xml)
+
+        this.emitFile({
+          type: 'asset',
+          fileName: files.get(assetId),
+          source: xml
+        })
+      }
+    }
+  }
+}

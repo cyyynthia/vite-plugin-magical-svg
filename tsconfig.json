@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "incremental": true,
+
+    "skipLibCheck": true,
+    "noEmitOnError": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitAny": true,
+    "allowUnreachableCode": false,
+    "allowJs": false,
+
+    "lib": [ "es2020" ],
+    "target": "es2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./dist"
+  },
+  "include": [ "src/**/*" ]
+}
