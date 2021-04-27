@@ -36,8 +36,11 @@ import { Builder, parseStringPromise as parseXml } from 'xml2js'
 import { optimize as svgoOptimize, extendDefaultPlugins as extendDefaultSvgoPlugins } from 'svgo'
 import MagicString from 'magic-string'
 
+import Generators from './codegen.js'
+
 type SymbolIdGenerator = (file: string) => string | null | void
 export type MagicalSvgConfig = {
+  target?: keyof typeof Generators,
   symbolId?: SymbolIdGenerator,
   svgo?: boolean
 }
@@ -87,28 +90,6 @@ async function load (ctx: PluginContext, file: string, symbolIdGen: SymbolIdGene
   delete xml.svg.$.height
 
   return [ raw, xml, imports ]
-}
-
-// todo: generate code for react, vue, plain dom
-function generateQuickCode (xml: any) {
-  const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
-  const html = JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
-
-  return `
-    import { h } from 'preact'
-
-    export default function () {
-      return h('svg', { viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${html} } })
-    }
-  `
-}
-
-// todo: make svg's viewport match symbol's viewport
-function generateCode (viewBox: string, symbol: string) {
-  return `
-    import { h } from 'preact'
-    export default () => h('svg', { viewBox: '${viewBox}' }, h('use', { href: ${symbol} }))
-  `
 }
 
 function generateFilename (template: AssetName, file: string, raw: string) {
@@ -216,19 +197,20 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
         return null
       }
 
+      const generator = Generators[config.target ?? 'dom']
       const preamble = code.slice(0, exportIndex)
       if (serve) {
         const asset = assets.get(id)!
-        return [ preamble, generateQuickCode(asset.xml) ].join('\n')
+        return [ preamble, generator.dev(asset.xml) ].join('\n')
       }
 
       const symbolId = symbolIds.get(id)!
       if (assetId === 'inline') {
-        return [ preamble, generateCode(viewBoxes.get(id)!, `'#${symbolId}'`) ].join('\n')
+        return [ preamble, generator.prod(viewBoxes.get(id)!, `'#${symbolId}'`) ].join('\n')
       }
 
       sprites.set(symbolId, assetId)
-      return [ preamble, generateCode(viewBoxes.get(id)!, `__MAGICAL_SVG_SPRITE__${symbolId}__`) ].join('\n')
+      return [ preamble, generator.prod(viewBoxes.get(id)!, `__MAGICAL_SVG_SPRITE__${symbolId}__`) ].join('\n')
     },
     renderChunk (code) {
       let match
