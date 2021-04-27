@@ -27,14 +27,14 @@
 
 import type { Plugin } from 'vite'
 import type { PluginContext, OutputOptions } from 'rollup'
+import type { OptimizeOptions, Plugin as SvgoPlugin } from 'svgo'
 import { URL } from 'url'
 import { createHash } from 'crypto'
 import { readFile } from 'fs/promises'
 import { basename, extname, relative } from 'path'
 import { Builder, parseStringPromise as parseXml } from 'xml2js'
+import { optimize as svgoOptimize, extendDefaultPlugins as extendDefaultSvgoPlugins } from 'svgo'
 import MagicString from 'magic-string'
-
-// todo: optional optimization with svgo
 
 type SymbolIdGenerator = (file: string) => string | null | void
 export type MagicalSvgConfig = {
@@ -260,7 +260,14 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
         await transformRefs(asset.xml.svg, async (ref) => `/${output.get(ref)}` ?? null)
 
         const builder = new Builder()
-        const xml = builder.buildObject(asset.xml)
+        let xml = builder.buildObject(asset.xml)
+        if (config.svgo !== false) {
+          const plugins: SvgoPlugin[] = [ { name: 'cleanupIDs', params: { minify: false, remove: false }, active: true } ]
+          if (output.has(assetId)) plugins.push({ name: 'removeUselessDefs', active: false })
+          const opts: OptimizeOptions = { plugins: extendDefaultSvgoPlugins(plugins) }
+
+          xml = svgoOptimize(xml, opts).data
+        }
 
         this.emitFile({
           type: 'asset',
