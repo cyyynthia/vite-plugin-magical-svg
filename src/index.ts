@@ -35,7 +35,6 @@ import { Builder, parseStringPromise as parseXml } from 'xml2js'
 import MagicString from 'magic-string'
 
 // todo: optional optimization with svgo
-// todo: inline svg at the top of the html document
 
 type SvgAsset = { sources: string[], xml: any }
 type AssetName = NonNullable<OutputOptions['assetFileNames']>
@@ -86,6 +85,7 @@ async function load (ctx: PluginContext, file: string): Promise<[ string, any, s
 }
 
 // todo: generate code for react, vue, plain dom
+// todo: make svg's viewport match symbol's viewport
 function generateQuickCode (xml: any) {
   const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
   const html = JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
@@ -154,6 +154,18 @@ export default function (): Plugin {
         fileName = output.assetFileNames
       }
     },
+    async transformIndexHtml (html) {
+      if (assets.has('inline')) {
+        const inline = assets.get('inline')!
+        const bodyTagStart = html.indexOf('<body')
+        const bodyStart = html.indexOf('>', bodyTagStart) + 1
+
+        const head = html.slice(0, bodyStart)
+        const body = html.slice(bodyStart)
+        const svg = new Builder({ headless: true }).buildObject(inline.xml)
+        return head + svg + body
+      }
+    },
     async load (id) {
       const url = new URL(id, 'file:///')
       if (!url.pathname.endsWith('.svg')) return null
@@ -204,6 +216,10 @@ export default function (): Plugin {
       }
 
       const symbolId = symbolIds.get(id)!
+      if (assetId === 'inline') {
+        return [ preamble, generateCode(`'#${symbolId}'`) ].join('\n')
+      }
+
       sprites.set(symbolId, assetId)
       return [ preamble, generateCode(`__MAGICAL_SVG_SPRITE__${symbolId}__`) ].join('\n')
     },
@@ -233,6 +249,8 @@ export default function (): Plugin {
     },
     async generateBundle () {
       for (const assetId of assets.keys()) {
+        if (assetId === 'inline') return
+
         const asset = assets.get(assetId)!
         await transformRefs(asset.xml.svg, async (ref) => `/${output.get(ref)}` ?? null)
 
