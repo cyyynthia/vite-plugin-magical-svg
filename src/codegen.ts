@@ -58,13 +58,13 @@ const codegen = {
 
       return `
         import { createElement } from 'react'
-        export default () => createElement('svg', { viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${html} } })
+        export default (props) => createElement('svg', { ...props, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${html} } })
       `
     },
     prod (viewBox: string, symbol: string): string {
       return `
         import { createElement } from 'react'
-        export default () => createElement('svg', { viewBox: '${viewBox}' }, createElement('use', { href: ${symbol} }))
+        export default (props) => createElement('svg', { ...props, viewBox: '${viewBox}' }, createElement('use', { href: ${symbol} }))
       `
     }
   },
