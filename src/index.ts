@@ -56,8 +56,7 @@ async function transformRefs (xml: any, fn: (ref: any) => Promise<string | null>
   for (const tag in xml) {
     if (tag in xml && tag !== '$') {
       for (const element of xml[tag]) {
-        // todo: match all possible references
-        if (tag === 'image' && element.$?.href) {
+        if ((tag === 'image' || tag === 'use') && element.$?.href) {
           const ref = await fn(element.$.href)
           if (ref) element.$.href = ref
         }

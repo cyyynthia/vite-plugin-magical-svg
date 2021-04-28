@@ -8,7 +8,6 @@
     "strictPropertyInitialization": true,
     "esModuleInterop": true,
     "declaration": true,
-    "incremental": true,
 
     "skipLibCheck": true,
     "noEmitOnError": true,

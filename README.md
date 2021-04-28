@@ -21,11 +21,25 @@ a problem that made using them a pain, or outright impractical. Here's a list of
 So I decided to make my own tool to solve all this problems. Introducing: the Magical SVG plugin. 🪄
 
 ## Install
-The plugin isn't ready yet for use. Soon!
-<!--
 ```
 pnpm i vite-plugin-magical-svg
 yarn add vite-plugin-magical-svg
 npm i vite-plugin-magical-svg
 ```
--->
+
+## Usage
+```js
+import { defineConfig } from 'vite'
+import magicalSvg from 'vite-plugin-magical-svg'
+
+export default defineConfig({
+  plugins: [
+    magicalSvg({
+      // By default, the output will be a dom element (the <svg> you can use inside the webpage).
+      // You can also change the output to react (ou preact) to get a component you can use.
+      target: 'preact',
+      // By default, the svgs are optimized with svgo. You can disable this by setting this to false.
+      svgo: false
+    })
+  ]
+})
