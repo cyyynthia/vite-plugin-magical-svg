@@ -48,7 +48,9 @@ export type MagicalSvgConfig = {
 type SvgAsset = { sources: string[], xml: any }
 type AssetName = NonNullable<OutputOptions['assetFileNames']>
 
-const ASSET_RE = /__MAGICAL_SVG_SPRITE__([0-9a-f]{8})__/g
+const ASSET_RE = /__MAGICAL_SVG_SPRITE__([0-9a-zA-Z_]+?)__/g
+
+const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
 
 async function transformRefs (xml: any, fn: (ref: any) => Promise<string | null>) {
   if (typeof xml !== 'object') return
@@ -117,6 +119,7 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
   let fileName: AssetName = 'assets/[name].[hash].[ext]'
   let sourcemap = false
   let serve = false
+  let symbolCounter = 0
 
   const assets = new Map<string, SvgAsset>()
   const loaded = new Map<string, any>()
@@ -125,6 +128,21 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
   const files = new Map<string, string>()
   const output = new Map<string, string>()
   const sprites = new Map<string, string>()
+
+  function basicIdGenerator () {
+    let base = ALPHABET.length
+    let sc = symbolCounter
+    let id = ''
+
+    while (sc !== 0) {
+      const b = sc % base
+      sc = Math.floor(sc / base)
+      id += ALPHABET[b]
+    }
+
+    symbolCounter++
+    return id || '0'
+  }
 
   return {
     name: 'vite-plugin-magical-svg',
@@ -156,7 +174,7 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
       const url = new URL(id, 'file:///')
       if (!url.pathname.endsWith('.svg')) return null
 
-      const [ raw, xml, imports ] = await load(this, url.pathname, config.symbolId || (() => Math.random().toString(16).slice(2, 10)))
+      const [ raw, xml, imports ] = await load(this, url.pathname, config.symbolId || basicIdGenerator)
       viewBoxes.set(id, xml.svg.$.viewBox)
       if (url.searchParams.has('file') || serve) {
         assets.set(id, { sources: [], xml: xml })
@@ -218,13 +236,14 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
         magicString = magicString || (magicString = new MagicString(code))
         const assetId = sprites.get(match[1])!
         const asset = assets.get(assetId)!
-        const file = generateFilename(fileName, `${assetId}.svg`, asset.sources.join(''))
-        files.set(assetId, file)
+        if (!files.has(assetId)) {
+          files.set(assetId, generateFilename(fileName, `${assetId}.svg`, asset.sources.sort().join('')))
+        }
 
         magicString.overwrite(
           match.index,
           match.index + match[0].length,
-          JSON.stringify(`/${file}#${match[1]}`)
+          JSON.stringify(`/${files.get(assetId)}#${match[1]}`)
         )
       }
 
@@ -240,7 +259,7 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
         if (assetId === 'inline') return
 
         const asset = assets.get(assetId)!
-        await transformRefs(asset.xml.svg, async (ref) => `/${output.get(ref)}` ?? null)
+        await transformRefs(asset.xml.svg, async (ref) => output.get(ref) ?? null)
 
         const builder = new Builder()
         let xml = builder.buildObject(asset.xml)
