@@ -38,7 +38,7 @@ import MagicString from 'magic-string'
 
 import Generators from './codegen.js'
 
-type SymbolIdGenerator = (file: string) => string | null | void
+type SymbolIdGenerator = (file: string, raw: string) => string | null | void
 export type MagicalSvgConfig = {
   target?: keyof typeof Generators,
   symbolId?: SymbolIdGenerator,
@@ -48,9 +48,7 @@ export type MagicalSvgConfig = {
 type SvgAsset = { sources: string[], xml: any }
 type AssetName = NonNullable<OutputOptions['assetFileNames']>
 
-const ASSET_RE = /__MAGICAL_SVG_SPRITE__([0-9a-zA-Z_]+?)__/g
-
-const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
+const ASSET_RE = /__MAGICAL_SVG_SPRITE__([0-9a-f]{8})__/g
 
 async function transformRefs (xml: any, fn: (ref: any) => Promise<string | null>) {
   if (typeof xml !== 'object') return
@@ -69,7 +67,7 @@ async function transformRefs (xml: any, fn: (ref: any) => Promise<string | null>
   }
 }
 
-async function load (ctx: PluginContext, file: string, symbolIdGen: SymbolIdGenerator): Promise<[ string, any, string[] ]> {
+async function load (ctx: PluginContext, file: string, symbolIdGen?: SymbolIdGenerator): Promise<[ string, any, string[] ]> {
   const imports: string[] = []
   const raw = await readFile(file, 'utf8')
   const xml = await parseXml(raw)
@@ -86,7 +84,7 @@ async function load (ctx: PluginContext, file: string, symbolIdGen: SymbolIdGene
 
   if (typeof xml.svg !== 'object') xml.svg = { _: xml.svg }
   xml.svg.$ = xml.svg.$ ?? {}
-  xml.svg.$.id = symbolIdGen(file)
+  xml.svg.$.id = symbolIdGen?.(file, raw) || createHash('sha256').update(raw).digest('hex').slice(0, 8);
   delete xml.svg.$.width
   delete xml.svg.$.height
 
@@ -119,7 +117,6 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
   let fileName: AssetName = 'assets/[name].[hash].[ext]'
   let sourcemap = false
   let serve = false
-  let symbolCounter = 0
 
   const assets = new Map<string, SvgAsset>()
   const loaded = new Map<string, any>()
@@ -128,21 +125,6 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
   const files = new Map<string, string>()
   const output = new Map<string, string>()
   const sprites = new Map<string, string>()
-
-  function basicIdGenerator () {
-    let base = ALPHABET.length
-    let sc = symbolCounter
-    let id = ''
-
-    while (sc !== 0) {
-      const b = sc % base
-      sc = Math.floor(sc / base)
-      id += ALPHABET[b]
-    }
-
-    symbolCounter++
-    return id || '0'
-  }
 
   return {
     name: 'vite-plugin-magical-svg',
@@ -174,7 +156,7 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
       const url = new URL(id, 'file:///')
       if (!url.pathname.endsWith('.svg')) return null
 
-      const [ raw, xml, imports ] = await load(this, url.pathname, config.symbolId || basicIdGenerator)
+      const [ raw, xml, imports ] = await load(this, url.pathname, config.symbolId)
       viewBoxes.set(id, xml.svg.$.viewBox)
       if (url.searchParams.has('file') || serve) {
         assets.set(id, { sources: [], xml: xml })
@@ -264,7 +246,11 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
         const builder = new Builder()
         let xml = builder.buildObject(asset.xml)
         if (config.svgo !== false) {
-          const plugins: SvgoPlugin[] = [ { name: 'cleanupIDs', params: { minify: false, remove: false }, active: true } ]
+          const plugins: SvgoPlugin[] = [
+            { name: 'cleanupIDs', params: { minify: false, remove: false }, active: true },
+            { name: 'cleanupNumericValues', active: false }
+          ]
+
           if (output.has(assetId)) plugins.push({ name: 'removeUselessDefs', active: false })
           const opts: OptimizeOptions = { plugins: extendDefaultSvgoPlugins(plugins) }
 
