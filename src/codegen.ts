@@ -27,21 +27,20 @@
 
 import { Builder } from 'xml2js'
 
+function renderHtml (xml: any) {
+  const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
+  return JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
+}
+
 const codegen = {
   dom: {
-    dev (xml: any): string {
-      const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
-      const html = JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
-
-      return `
+    dev: (xml: any): string => `
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
         svg.setAttribute('viewBox', '${xml.svg.$.viewBox}')
-        svg.innerHTML = ${html}
+        svg.innerHTML = ${renderHtml(xml)}
         export default svg
-      `
-    },
-    prod (viewBox: string, symbol: string): string {
-      return `
+      `,
+    prod: (viewBox: string, symbol: string): string => `
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
         const use = document.createElementNS('http://www.w3.org/2000/svg', 'use')
         svg.setAttribute('viewBox', '${viewBox}')
@@ -49,28 +48,28 @@ const codegen = {
         svg.appendChild(use)
         export default svg
       `
-    }
   },
   react: {
-    dev (xml: any): string {
-      const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
-      const html = JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
-
-      return `
-        import { createElement } from 'react'
-        export default (props) => createElement('svg', { ...props, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${html} } })
+    dev: (xml: any): string => `
+        import { createElement, forwardRef } from 'react'
+        export default forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml)} } }))
+      `,
+    prod: (viewBox: string, symbol: string): string => `
+        import { createElement, forwardRef } from 'react'
+        export default forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${viewBox}' }, createElement('use', { href: ${symbol} })))
       `
-    },
-    prod (viewBox: string, symbol: string): string {
-      return `
-        import { createElement } from 'react'
-        export default (props) => createElement('svg', { ...props, viewBox: '${viewBox}' }, createElement('use', { href: ${symbol} }))
-      `
-    }
   },
   preact: {
-    dev: (xml: any) => codegen.react.dev(xml).replace(/createElement/g, 'h').replace(/react/g, 'preact'),
-    prod: (viewBox: string, symbol: string) => codegen.react.prod(viewBox, symbol).replace(/createElement/g, 'h').replace(/react/g, 'preact')
+    dev: (xml: any): string => `
+        import { h } from 'preact'
+        import { forwardRef } from 'preact/compat'
+        export default forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml)} } }))
+      `,
+    prod: (viewBox: string, symbol: string): string => `
+        import { h } from 'preact'
+        import { forwardRef } from 'preact/compat'
+        export default forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${viewBox}' }, h('use', { href: ${symbol} })))
+      `
   }
 }
 
