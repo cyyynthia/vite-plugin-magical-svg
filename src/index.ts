@@ -27,13 +27,13 @@
 
 import type { Plugin } from 'vite'
 import type { PluginContext, OutputOptions } from 'rollup'
-import type { OptimizeOptions, Plugin as SvgoPlugin } from 'svgo'
+import type { OptimizeOptions } from 'svgo'
 import { URL } from 'url'
 import { createHash } from 'crypto'
 import { readFile } from 'fs/promises'
 import { basename, extname, relative } from 'path'
 import { Builder, parseStringPromise as parseXml } from 'xml2js'
-import { optimize as svgoOptimize, extendDefaultPlugins as extendDefaultSvgoPlugins } from 'svgo'
+import { optimize as svgoOptimize } from 'svgo'
 import MagicString from 'magic-string'
 
 import resolve from './resolve.js'
@@ -254,13 +254,24 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
         const builder = new Builder()
         let xml = builder.buildObject(asset.xml)
         if (config.svgo !== false) {
-          const plugins: SvgoPlugin[] = [
-            { name: 'cleanupIDs', params: { minify: false, remove: false }, active: true },
-            { name: 'cleanupNumericValues', active: false }
-          ]
-
-          if (output.has(assetId)) plugins.push({ name: 'removeUselessDefs', active: false })
-          const opts: OptimizeOptions = { plugins: extendDefaultSvgoPlugins(plugins) }
+          const opts: OptimizeOptions = {
+            plugins: [
+              {
+                name: 'preset-default',
+                params: {
+                  overrides: {
+                    cleanupNumericValues: false,
+                    removeUselessDefs: output.has(assetId) ? false : void 0,
+                    cleanupIDs: {
+                      minify: false,
+                      remove: false,
+                    },
+                    convertPathData: false
+                  },
+                },
+              },
+            ],
+          }
 
           xml = svgoOptimize(xml, opts).data
         }
