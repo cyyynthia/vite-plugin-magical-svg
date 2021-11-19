@@ -43,3 +43,8 @@ export default defineConfig({
     })
   ]
 })
+```
+
+### `exports` note
+This plugin **does not** respect the `exports` field when importing svg files from third-party packages such as
+`simple-icons`, which do not expose them.

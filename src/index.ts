@@ -36,6 +36,7 @@ import { Builder, parseStringPromise as parseXml } from 'xml2js'
 import { optimize as svgoOptimize, extendDefaultPlugins as extendDefaultSvgoPlugins } from 'svgo'
 import MagicString from 'magic-string'
 
+import resolve from './resolve.js'
 import Generators from './codegen.js'
 
 type SymbolIdGenerator = (file: string, raw: string) => string | null | void
@@ -151,6 +152,13 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
         const svg = new Builder({ headless: true }).buildObject(inline.xml)
         return head + svg + body
       }
+    },
+    resolveId (id, importer) {
+      if (!importer || !id.endsWith('.svg') || id.startsWith('.') || id.startsWith('/')) return
+
+      // I'm implementing my own naive resolve as I need to *avoid* `exports` compliance
+      // which is something Vite's resolver won't let me do it seems :<
+      return resolve(id, importer)
     },
     async load (id) {
       const url = new URL(id, 'file:///')
