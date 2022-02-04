@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Cynthia K. Rey, All rights reserved.
+ * Copyright (c) 2021-2022 Cynthia K. Rey, All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -25,7 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { dirname, join } from 'path'
+import { dirname, resolve } from 'path'
 import { readdir } from 'fs/promises'
 import { existsSync } from 'fs'
 
@@ -41,9 +41,11 @@ async function findPackageRoot (path: string) {
 
 export default async function dumbNodeResolve (id: string, importer: string) {
   const pkgBase = await findPackageRoot(importer)
+  console.log(importer, pkgBase)
   if (!pkgBase) return null
 
-  const candidate = join(pkgBase, 'node_modules', id)
+  const candidate = resolve(pkgBase, 'node_modules', id)
+  console.log(id, candidate)
   if (!existsSync(candidate)) return null
 
   return candidate

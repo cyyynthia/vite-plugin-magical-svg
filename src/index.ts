@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Cynthia K. Rey, All rights reserved.
+ * Copyright (c) 2021-2022 Cynthia K. Rey, All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -51,14 +51,14 @@ type AssetName = NonNullable<OutputOptions['assetFileNames']>
 
 const ASSET_RE = /__MAGICAL_SVG_SPRITE__([0-9a-f]{8})__/g
 
-async function transformRefs (xml: any, fn: (ref: any) => Promise<string | null>) {
+async function transformRefs (xml: any, fn: (ref: string, isFile: boolean) => Promise<string | null>) {
   if (typeof xml !== 'object') return
 
   for (const tag in xml) {
     if (tag in xml && tag !== '$') {
       for (const element of xml[tag]) {
         if ((tag === 'image' || tag === 'use') && element.$?.href) {
-          const ref = await fn(element.$.href)
+          const ref = await fn(element.$.href, tag === 'image')
           if (ref) element.$.href = ref
         }
 
@@ -74,13 +74,16 @@ async function load (ctx: PluginContext, file: string, symbolIdGen?: SymbolIdGen
   const xml = await parseXml(raw)
   if (!('svg' in xml)) throw new Error('invalid svg: top level xml element isn\'t an svg')
 
-  await transformRefs(xml.svg, async (ref) => {
+  await transformRefs(xml.svg, async (ref, isFile) => {
     const resolved = await ctx.resolve(ref, file)
-    if (resolved?.id && !imports.includes(resolved.id)) {
-      imports.push(resolved.id)
-    }
+    if (!resolved?.id) return null
 
-    return resolved?.id ?? null
+    const url = new URL(resolved.id, 'file:///')
+    if (isFile) url.searchParams.set('file', 'true')
+    const importUrl = url.toString().slice(7)
+
+    if (!imports.includes(importUrl)) imports.push(importUrl)
+    return importUrl
   })
 
   if (typeof xml.svg !== 'object') xml.svg = { _: xml.svg }
@@ -120,11 +123,11 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
   let serve = false
 
   const assets = new Map<string, SvgAsset>()
-  const loaded = new Map<string, any>()
+
   const viewBoxes = new Map<string, string>()
   const symbolIds = new Map<string, string>()
+
   const files = new Map<string, string>()
-  const output = new Map<string, string>()
   const sprites = new Map<string, string>()
 
   return {
@@ -186,7 +189,6 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
         symbolIds.set(id, xml.svg.$.id)
       }
 
-      loaded.set(id, xml)
       const imp = imports.map((i) => `import ${JSON.stringify(i)};`).join('\n')
       const file = generateFilename(fileName, url.pathname, raw)
       return `${imp}\nexport default ${JSON.stringify(`/${file}`)}`
@@ -200,7 +202,6 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
       if (url.searchParams.has('file')) {
         const file = code.slice(exportIndex + 16, -1)
         files.set(assetId, file.slice(1))
-        output.set(id, file)
         return null
       }
 
@@ -249,7 +250,18 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
         if (assetId === 'inline') return
 
         const asset = assets.get(assetId)!
-        await transformRefs(asset.xml.svg, async (ref) => output.get(ref) ?? null)
+        await transformRefs(asset.xml.svg, async (ref, isFile) => {
+          if (!isFile) {
+            const url = new URL(ref, 'file:///')
+            const file = files.get(url.searchParams.get('sprite') || 'sprite')
+            if (!file) return null
+
+            return `/${file}#${symbolIds.get(ref)}`
+          }
+
+          const file = files.get(ref)
+          return file ? `/${file}` : null
+        })
 
         const builder = new Builder()
         let xml = builder.buildObject(asset.xml)
@@ -261,7 +273,7 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
                 params: {
                   overrides: {
                     cleanupNumericValues: false,
-                    removeUselessDefs: output.has(assetId) ? false : void 0,
+                    removeUselessDefs: files.has(assetId) ? false : void 0,
                     cleanupIDs: {
                       minify: false,
                       remove: false,
