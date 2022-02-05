@@ -257,7 +257,7 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
     },
     async generateBundle () {
       for (const assetId of assets.keys()) {
-        if (assetId === 'inline') return
+        if (assetId === 'inline') continue
 
         const asset = assets.get(assetId)!
         await transformRefs(asset.xml.svg, async (ref, isFile) => {
