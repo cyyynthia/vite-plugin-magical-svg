@@ -1,6 +1,7 @@
 # Magical SVG 🪄
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71TSDF)<br>
 [![License](https://img.shields.io/github/license/cyyynthia/vite-plugin-magical-svg.svg?style=flat-square)](https://github.com/cyyynthia/vite-plugin-magical-svg/blob/mistress/LICENSE)
+[![npm](https://img.shields.io/npm/v/vite-plugin-magical-svg?style=flat-square)](https://npm.im/vite-plugin-magical-svg)
 
 An all-in-one [Vite](https://vitejs.dev/) plugin that magically makes working with SVGs and bundling them a breeze.
 
@@ -28,6 +29,7 @@ npm i vite-plugin-magical-svg
 ```
 
 ## Usage
+### Vite plugin setup
 ```js
 import { defineConfig } from 'vite'
 import magicalSvg from 'vite-plugin-magical-svg'
@@ -43,6 +45,28 @@ export default defineConfig({
     })
   ]
 })
+```
+
+#### Targets
+ - `dom` (default): exports a function you can call (takes no arguments) and returns a DOM element.
+ - `react`: exports a functional React component (wrapped in `forwardRef`)
+ - `preact`: exports a functional Preact component (wrapped in `forwardRef`)
+
+### Use in code
+```js
+import MySvg from './assets/icon.svg' // Basic import, as a sprite
+import MySvg from './assets/icon.svg?sprite=owo' // Named sprites
+import MySvg from './assets/icon.svg?sprite=inline' // Special sprite, inlined in the HTML document
+import fileUrl from './assets/icon.svg' // Works like .png and other file imports
+```
+
+### SVG processing
+```xml
+<svg viewBox='0 0 250 250'>
+  <image href='./assets/image.png'> <!-- Image will be imported, bundled, and the href will be replaced -->
+  <image href='./assets/icon.svg'> <!-- SVG will be imported as a file (implicit ?file) -->
+  <use href='./assets/icon.svg'> <!-- SVG will be imported and added to the sprite -->
+</svg>
 ```
 
 ### `exports` note
