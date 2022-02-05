@@ -41,11 +41,9 @@ async function findPackageRoot (path: string) {
 
 export default async function dumbNodeResolve (id: string, importer: string) {
   const pkgBase = await findPackageRoot(importer)
-  console.log(importer, pkgBase)
   if (!pkgBase) return null
 
   const candidate = resolve(pkgBase, 'node_modules', id)
-  console.log(id, candidate)
   if (!existsSync(candidate)) return null
 
   return candidate

@@ -202,23 +202,37 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
       if (url.searchParams.has('file')) {
         const file = code.slice(exportIndex + 16, -1)
         files.set(assetId, file.slice(1))
-        return null
+        return {
+          code: code,
+          map: { mappings: '' },
+        }
       }
 
       const generator = Generators[config.target ?? 'dom']
       const preamble = code.slice(0, exportIndex)
       if (serve) {
         const asset = assets.get(id)!
-        return [ preamble, generator.dev(asset.xml) ].join('\n')
+        return {
+          code: [ preamble, generator.dev(asset.xml) ].join('\n'),
+          map: { mappings: '' },
+        }
       }
 
       const symbolId = symbolIds.get(id)!
       if (assetId === 'inline') {
-        return [ preamble, generator.prod(viewBoxes.get(id)!, `'#${symbolId}'`) ].join('\n')
+        return {
+          code: [ preamble, generator.prod(viewBoxes.get(id)!, `'#${symbolId}'`) ].join('\n'),
+          map: { mappings: '' },
+        }
       }
 
       sprites.set(symbolId, assetId)
-      return [ preamble, generator.prod(viewBoxes.get(id)!, `__MAGICAL_SVG_SPRITE__${symbolId}__`) ].join('\n')
+      const asset = assets.get(assetId)!
+      files.set(assetId, generateFilename(fileName, `${assetId}.svg`, asset.sources.sort().join('')))
+      return {
+        code: [ preamble, generator.prod(viewBoxes.get(id)!, `__MAGICAL_SVG_SPRITE__${symbolId}__`) ].join('\n'),
+        map: { mappings: '' },
+      }
     },
     renderChunk (code) {
       let match
@@ -226,10 +240,6 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
       while ((match = ASSET_RE.exec(code))) {
         magicString = magicString || (magicString = new MagicString(code))
         const assetId = sprites.get(match[1])!
-        const asset = assets.get(assetId)!
-        if (!files.has(assetId)) {
-          files.set(assetId, generateFilename(fileName, `${assetId}.svg`, asset.sources.sort().join('')))
-        }
 
         magicString.overwrite(
           match.index,
@@ -285,7 +295,12 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
             ],
           }
 
-          xml = svgoOptimize(xml, opts).data
+          const res = svgoOptimize(xml, opts)
+          if (res.modernError) {
+            this.error(res.modernError.message, { column: res.modernError.column, line: res.modernError.line })
+          }
+
+          xml = res.data
         }
 
         this.emitFile({

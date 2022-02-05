@@ -35,18 +35,22 @@ function renderHtml (xml: any) {
 const codegen = {
   dom: {
     dev: (xml: any): string => `
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-        svg.setAttribute('viewBox', '${xml.svg.$.viewBox}')
-        svg.innerHTML = ${renderHtml(xml)}
-        export default svg
+        export default function () {
+          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+          svg.setAttribute('viewBox', '${xml.svg.$.viewBox}')
+          svg.innerHTML = ${renderHtml(xml)}
+          return svg
+        }
       `,
     prod: (viewBox: string, symbol: string): string => `
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-        const use = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-        svg.setAttribute('viewBox', '${viewBox}')
-        use.setAttribute('href', ${symbol})
-        svg.appendChild(use)
-        export default svg
+        export default function () {
+          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+          const use = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+          svg.setAttribute('viewBox', '${viewBox}')
+          use.setAttribute('href', ${symbol})
+          svg.appendChild(use)
+          return svg
+        }
       `
   },
   react: {
@@ -56,7 +60,7 @@ const codegen = {
       `,
     prod: (viewBox: string, symbol: string): string => `
         import { createElement, forwardRef } from 'react'
-        export default forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${viewBox}' }, createElement('use', { href: ${symbol} })))
+        export default /*@__PURE__*/ forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${viewBox}' }, createElement('use', { href: ${symbol} })))
       `
   },
   preact: {
@@ -68,7 +72,7 @@ const codegen = {
     prod: (viewBox: string, symbol: string): string => `
         import { h } from 'preact'
         import { forwardRef } from 'preact/compat'
-        export default forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${viewBox}' }, h('use', { href: ${symbol} })))
+        export default /*@__PURE__*/ forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${viewBox}' }, h('use', { href: ${symbol} })))
       `
   }
 }
