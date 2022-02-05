@@ -37,7 +37,7 @@ import { optimize as svgoOptimize } from 'svgo'
 import MagicString from 'magic-string'
 
 import resolve from './resolve.js'
-import Generators from './codegen.js'
+import Generators, { inlineSymbol } from './codegen.js'
 
 type SymbolIdGenerator = (file: string, raw: string) => string | null | void
 export type MagicalSvgConfig = {
@@ -51,24 +51,39 @@ type AssetName = NonNullable<OutputOptions['assetFileNames']>
 
 const ASSET_RE = /__MAGICAL_SVG_SPRITE__([0-9a-f]{8})__/g
 
-async function transformRefs (xml: any, fn: (ref: string, isFile: boolean) => Promise<string | null>) {
-  if (typeof xml !== 'object') return
+function traverseSvg (xml: any, handler: (tag: string, xml: any) => Promise<void> | void): Promise<any> {
+  if (typeof xml !== 'object') return Promise.resolve()
+  const promises = []
 
   for (const tag in xml) {
     if (tag in xml && tag !== '$') {
       for (const element of xml[tag]) {
-        if ((tag === 'image' || tag === 'use') && element.$?.href) {
-          const ref = await fn(element.$.href, tag === 'image')
-          if (ref) element.$.href = ref
-        }
-
-        await transformRefs(element, fn)
+        promises.push(handler(tag, element), traverseSvg(element, handler))
       }
     }
   }
+
+  return Promise.all(promises)
 }
 
-async function load (ctx: PluginContext, file: string, symbolIdGen?: SymbolIdGenerator): Promise<[ string, any, string[] ]> {
+function transformRefs (xml: any, fn: (ref: string, isFile: boolean) => Promise<string | null>) {
+  return traverseSvg(xml, async (tag, element) => {
+    if ((tag === 'image' || tag === 'use') && element.$?.href) {
+      const ref = await fn(element.$.href, tag === 'image')
+      if (ref) element.$.href = ref
+    }
+  })
+}
+
+function hashSymbols (xml: any) {
+  return traverseSvg(xml, (tag, element) => {
+    if (tag === 'use' && element.$?.href) {
+      element.$.href = `#${createHash('sha256').update(element.$.href).digest('hex').slice(0, 8)}`
+    }
+  })
+}
+
+async function load (ctx: PluginContext, file: string, serve: boolean, symbolIdGen?: SymbolIdGenerator): Promise<[ string, any, string[] ]> {
   const imports: string[] = []
   const raw = await readFile(file, 'utf8')
   const xml = await parseXml(raw)
@@ -80,8 +95,9 @@ async function load (ctx: PluginContext, file: string, symbolIdGen?: SymbolIdGen
 
     const url = new URL(resolved.id, 'file:///')
     if (isFile) url.searchParams.set('file', 'true')
-    const importUrl = url.toString().slice(7)
+    else if (serve) url.searchParams.set('sprite', 'inline')
 
+    const importUrl = url.toString().slice(7)
     if (!imports.includes(importUrl)) imports.push(importUrl)
     return importUrl
   })
@@ -167,7 +183,7 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
       const url = new URL(id, 'file:///')
       if (!url.pathname.endsWith('.svg')) return null
 
-      const [ raw, xml, imports ] = await load(this, url.pathname, config.symbolId)
+      const [ raw, xml, imports ] = await load(this, url.pathname, serve, config.symbolId)
       viewBoxes.set(id, xml.svg.$.viewBox)
       if (url.searchParams.has('file') || serve) {
         assets.set(id, { sources: [], xml: xml })
@@ -212,6 +228,16 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
       const preamble = code.slice(0, exportIndex)
       if (serve) {
         const asset = assets.get(id)!
+        hashSymbols(asset.xml.svg)
+
+        if (assetId === 'inline') {
+          asset.xml.svg.$.id = createHash('sha256').update(id).digest('hex').slice(0, 8)
+          return {
+            code: [ preamble, inlineSymbol(asset.xml), generator.prod(asset.xml.$.viewBox, asset.xml.svg.$.id) ].join('\n'),
+            map: { mappings: '' },
+          }
+        }
+
         return {
           code: [ preamble, generator.dev(asset.xml) ].join('\n'),
           map: { mappings: '' },

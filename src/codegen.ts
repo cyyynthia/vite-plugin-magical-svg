@@ -27,9 +27,11 @@
 
 import { Builder } from 'xml2js'
 
-function renderHtml (xml: any) {
+function renderHtml (xml: any, useSymbol: boolean) {
   const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
-  return JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
+  return useSymbol
+    ? JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
+    : JSON.stringify(symbol)
 }
 
 const codegen = {
@@ -38,7 +40,7 @@ const codegen = {
         export default function () {
           const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
           svg.setAttribute('viewBox', '${xml.svg.$.viewBox}')
-          svg.innerHTML = ${renderHtml(xml)}
+          svg.innerHTML = ${renderHtml(xml, true)}
           return svg
         }
       `,
@@ -56,7 +58,7 @@ const codegen = {
   react: {
     dev: (xml: any): string => `
         import { createElement, forwardRef } from 'react'
-        export default forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml)} } }))
+        export default forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }))
       `,
     prod: (viewBox: string, symbol: string): string => `
         import { createElement, forwardRef } from 'react'
@@ -67,7 +69,7 @@ const codegen = {
     dev: (xml: any): string => `
         import { h } from 'preact'
         import { forwardRef } from 'preact/compat'
-        export default forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml)} } }))
+        export default forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }))
       `,
     prod: (viewBox: string, symbol: string): string => `
         import { h } from 'preact'
@@ -75,6 +77,19 @@ const codegen = {
         export default /*@__PURE__*/ forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${viewBox}' }, h('use', { href: ${symbol} })))
       `
   }
+}
+
+export function inlineSymbol (xml: any): string {
+  return `
+    (() => {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      svg.setAttribute('height', '0')
+      svg.setAttribute('width', '0')
+      svg.setAttribute('viewBox', '${xml.svg.$.viewBox}')
+      svg.innerHTML = ${renderHtml(xml, false)}
+      document.body.prepend(svg)
+    })();
+  `
 }
 
 export default codegen
