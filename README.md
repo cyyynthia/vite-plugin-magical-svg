@@ -38,7 +38,7 @@ export default defineConfig({
   plugins: [
     magicalSvg({
       // By default, the output will be a dom element (the <svg> you can use inside the webpage).
-      // You can also change the output to react (ou preact) to get a component you can use.
+      // You can also change the output to react (or preact) to get a component you can use.
       target: 'preact',
       // By default, the svgs are optimized with svgo. You can disable this by setting this to false.
       svgo: false
