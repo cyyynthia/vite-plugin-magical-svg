@@ -57,31 +57,31 @@ const codegen = {
   },
   react: {
     dev: (xml: any): string => `
-        import { createElement, forwardRef } from 'react'
-        export default forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }))
+        import { createElement, forwardRef } from 'react';
+        export default forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }));
       `,
     prod: (viewBox: string, symbol: string): string => `
-        import { createElement, forwardRef } from 'react'
-        export default /*@__PURE__*/ forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${viewBox}' }, createElement('use', { href: ${symbol} })))
+        import { createElement, forwardRef } from 'react';
+        export default /*@__PURE__*/ forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${viewBox}' }, createElement('use', { href: ${symbol} })));
       `
   },
   preact: {
     dev: (xml: any): string => `
-        import { h } from 'preact'
-        import { forwardRef } from 'preact/compat'
-        export default forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }))
+        import { h } from 'preact';
+        import { forwardRef } from 'preact/compat';
+        export default forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }));
       `,
     prod: (viewBox: string, symbol: string): string => `
-        import { h } from 'preact'
-        import { forwardRef } from 'preact/compat'
-        export default /*@__PURE__*/ forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${viewBox}' }, h('use', { href: ${symbol} })))
+        import { h } from 'preact';
+        import { forwardRef } from 'preact/compat';
+        export default /*@__PURE__*/ forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${viewBox}' }, h('use', { href: ${symbol} })));
       `
   }
 }
 
 export function inlineSymbol (xml: any): string {
   return `
-    (() => {
+    ;(() => {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
       svg.setAttribute('height', '0')
       svg.setAttribute('width', '0')

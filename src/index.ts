@@ -233,7 +233,7 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
         if (assetId === 'inline') {
           asset.xml.svg.$.id = createHash('sha256').update(id).digest('hex').slice(0, 8)
           return {
-            code: [ preamble, inlineSymbol(asset.xml), generator.prod(asset.xml.$.viewBox, asset.xml.svg.$.id) ].join('\n'),
+            code: [ preamble, generator.prod(asset.xml.svg.$.viewBox, `'#${asset.xml.svg.$.id}'`), inlineSymbol(asset.xml) ].join('\n'),
             map: { mappings: '' },
           }
         }
