@@ -18,7 +18,7 @@
   "dependencies": {
     "magic-string": "^0.25.7",
     "svgo": "^2.8.0",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.6.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.21",
