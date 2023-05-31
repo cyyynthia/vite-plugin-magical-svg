@@ -278,7 +278,8 @@ export default function (config: MagicalSvgConfig = {}): Plugin {
 
       return {
         code: magicString.toString(),
-        map: sourcemap ? magicString.generateMap({ hires: true }) : null
+        // .toString() to make TS happy :shrug:
+        map: sourcemap ? magicString.generateMap({ hires: true }).toString() : null
       }
     },
     async generateBundle () {
