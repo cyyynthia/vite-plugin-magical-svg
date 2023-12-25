@@ -134,7 +134,7 @@ function generateFilename (template: AssetName, file: string, raw: string) {
 	})
 }
 
-export default function (config: MagicalSvgConfig = {}): Plugin {
+module.exports = function (config: MagicalSvgConfig = {}): Plugin {
 	let fileName: AssetName = 'assets/[name].[hash].[ext]'
 	let sourcemap = false
 	let serve = false
