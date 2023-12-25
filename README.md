@@ -1,5 +1,4 @@
 # Magical SVG 🪄
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71TSDF)<br>
 [![License](https://img.shields.io/github/license/cyyynthia/vite-plugin-magical-svg.svg?style=flat-square)](https://github.com/cyyynthia/vite-plugin-magical-svg/blob/mistress/LICENSE)
 [![npm](https://img.shields.io/npm/v/vite-plugin-magical-svg?style=flat-square)](https://npm.im/vite-plugin-magical-svg)
 

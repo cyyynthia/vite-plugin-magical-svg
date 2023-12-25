@@ -1,5 +1,6 @@
-/*
- * Copyright (c) 2021-2022 Cynthia K. Rey, All rights reserved.
+/*!
+ * Copyright (c) Cynthia Rey, All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -30,21 +31,21 @@ import { readdir } from 'fs/promises'
 import { existsSync } from 'fs'
 
 async function findPackageRoot (path: string) {
-  do {
-    path = dirname(path)
-    const res = await readdir(path)
-    if (res.includes('package.json')) return path
-  } while (path !== '/')
+	do {
+		path = dirname(path)
+		const res = await readdir(path)
+		if (res.includes('package.json')) return path
+	} while (path !== '/')
 
-  return null
+	return null
 }
 
 export default async function dumbNodeResolve (id: string, importer: string) {
-  const pkgBase = await findPackageRoot(importer)
-  if (!pkgBase) return null
+	const pkgBase = await findPackageRoot(importer)
+	if (!pkgBase) return null
 
-  const candidate = resolve(pkgBase, 'node_modules', id)
-  if (!existsSync(candidate)) return null
+	const candidate = resolve(pkgBase, 'node_modules', id)
+	if (!existsSync(candidate)) return null
 
-  return candidate
+	return candidate
 }

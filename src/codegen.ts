@@ -1,5 +1,6 @@
-/*
- * Copyright (c) 2021-2022 Cynthia K. Rey, All rights reserved.
+/*!
+ * Copyright (c) Cynthia Rey, All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -28,68 +29,68 @@
 import { Builder } from 'xml2js'
 
 function renderHtml (xml: any, useSymbol: boolean) {
-  const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
-  return useSymbol
-    ? JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
-    : JSON.stringify(symbol)
+	const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
+	return useSymbol
+		? JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
+		: JSON.stringify(symbol)
 }
 
 const codegen = {
-  dom: {
-    dev: (xml: any): string => `
-        export default function () {
-          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-          svg.setAttribute('viewBox', '${xml.svg.$.viewBox}')
-          svg.innerHTML = ${renderHtml(xml, true)}
-          return svg
-        }
-      `,
-    prod: (viewBox: string, symbol: string): string => `
-        export default function () {
-          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-          const use = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-          svg.setAttribute('viewBox', '${viewBox}')
-          use.setAttribute('href', ${symbol})
-          svg.appendChild(use)
-          return svg
-        }
-      `
-  },
-  react: {
-    dev: (xml: any): string => `
-        import { createElement, forwardRef } from 'react';
-        export default forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }));
-      `,
-    prod: (viewBox: string, symbol: string): string => `
-        import { createElement, forwardRef } from 'react';
-        export default /*@__PURE__*/ forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${viewBox}' }, createElement('use', { href: ${symbol} })));
-      `
-  },
-  preact: {
-    dev: (xml: any): string => `
-        import { h } from 'preact';
-        import { forwardRef } from 'preact/compat';
-        export default forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }));
-      `,
-    prod: (viewBox: string, symbol: string): string => `
-        import { h } from 'preact';
-        import { forwardRef } from 'preact/compat';
-        export default /*@__PURE__*/ forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${viewBox}' }, h('use', { href: ${symbol} })));
-      `
-  }
+	dom: {
+		dev: (xml: any): string => `
+				export default function () {
+					const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+					svg.setAttribute('viewBox', '${xml.svg.$.viewBox}')
+					svg.innerHTML = ${renderHtml(xml, true)}
+					return svg
+				}
+			`,
+		prod: (viewBox: string, symbol: string): string => `
+				export default function () {
+					const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+					const use = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+					svg.setAttribute('viewBox', '${viewBox}')
+					use.setAttribute('href', ${symbol})
+					svg.appendChild(use)
+					return svg
+				}
+			`
+	},
+	react: {
+		dev: (xml: any): string => `
+				import { createElement, forwardRef } from 'react';
+				export default forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }));
+			`,
+		prod: (viewBox: string, symbol: string): string => `
+				import { createElement, forwardRef } from 'react';
+				export default /*@__PURE__*/ forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${viewBox}' }, createElement('use', { href: ${symbol} })));
+			`
+	},
+	preact: {
+		dev: (xml: any): string => `
+				import { h } from 'preact';
+				import { forwardRef } from 'preact/compat';
+				export default forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }));
+			`,
+		prod: (viewBox: string, symbol: string): string => `
+				import { h } from 'preact';
+				import { forwardRef } from 'preact/compat';
+				export default /*@__PURE__*/ forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${viewBox}' }, h('use', { href: ${symbol} })));
+			`
+	}
 }
 
 export function inlineSymbol (xml: any): string {
-  return `
-    ;(() => {
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-      svg.setAttribute('height', '0')
-      svg.setAttribute('width', '0')
-      svg.setAttribute('viewBox', '${xml.svg.$.viewBox}')
-      svg.innerHTML = ${renderHtml(xml, false)}
-      document.body.prepend(svg)
-    })();
-  `
+	return `
+		;(() => {
+			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+			svg.setAttribute('height', '0')
+			svg.setAttribute('width', '0')
+			svg.setAttribute('viewBox', '${xml.svg.$.viewBox}')
+			svg.innerHTML = ${renderHtml(xml, false)}
+			document.body.prepend(svg)
+		})();
+	`
 }
 
 export default codegen
