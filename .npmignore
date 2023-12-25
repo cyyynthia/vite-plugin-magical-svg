@@ -1,1 +1,16 @@
+# editor
+.idea
+.vscode
+
+# test
+*.nogit.*
+*.nogit/
+
+# source
 src
+
+# misc
+tsconfig.json
+.editorconfig
+.git-blame-ignore-revs
+.github
