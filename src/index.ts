@@ -29,7 +29,7 @@
 import type { Plugin } from 'vite'
 import type { PluginContext, OutputOptions } from 'rollup'
 import type { Config } from 'svgo'
-import { URL } from 'url'
+import { fileURLToPath } from 'url'
 import { createHash } from 'crypto'
 import { readFile } from 'fs/promises'
 import { basename, extname, relative } from 'path'
@@ -184,7 +184,8 @@ module.exports = function (config: MagicalSvgConfig = {}): Plugin {
 			const url = new URL(id, 'file:///')
 			if (!url.pathname.endsWith('.svg')) return null
 
-			const [ raw, xml, imports ] = await load(this, url.pathname, serve, config.symbolId)
+			const filePath = fileURLToPath(url)
+			const [ raw, xml, imports ] = await load(this, filePath, serve, config.symbolId)
 			viewBoxes.set(id, xml.svg.$.viewBox)
 			if (url.searchParams.has('file') || serve) {
 				assets.set(id, { sources: [], xml: xml })
@@ -207,7 +208,7 @@ module.exports = function (config: MagicalSvgConfig = {}): Plugin {
 			}
 
 			const imp = imports.map((i) => `import ${JSON.stringify(i)};`).join('\n')
-			const file = generateFilename(fileName, url.pathname, raw)
+			const file = generateFilename(fileName, filePath, raw)
 			return `${imp}\nexport default ${JSON.stringify(`/${file}`)}`
 		},
 		async transform (code, id) {
