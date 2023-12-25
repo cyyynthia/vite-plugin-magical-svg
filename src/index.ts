@@ -312,6 +312,7 @@ module.exports = function (config: MagicalSvgConfig = {}): Plugin {
 								params: {
 									overrides: {
 										cleanupNumericValues: false,
+										removeHiddenElems: false,
 										removeUselessDefs: files.has(assetId) ? false : void 0,
 										cleanupIds: {
 											minify: false,
