@@ -134,7 +134,7 @@ function generateFilename (template: AssetName, file: string, raw: string) {
 	})
 }
 
-module.exports = function (config: MagicalSvgConfig = {}): Plugin {
+function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 	let fileName: AssetName = 'assets/[name].[hash].[ext]'
 	let sourcemap = false
 	let serve = false
@@ -332,6 +332,7 @@ module.exports = function (config: MagicalSvgConfig = {}): Plugin {
 						if (e instanceof Error && e.name === 'SvgoParserError') {
 							// @ts-expect-error -- SvgoParserError is not exported by svgo :pensive:
 							const { message, line, column } = e
+							this.error(message, { column, line })
 						} else {
 							throw e
 						}
@@ -347,3 +348,7 @@ module.exports = function (config: MagicalSvgConfig = {}): Plugin {
 		}
 	}
 }
+
+export default magicalSvgPlugin
+// @ts-expect-error -- https://github.com/microsoft/TypeScript/issues/31780
+export = magicalSvgPlugin
