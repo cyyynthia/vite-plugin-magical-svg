@@ -1,20 +1,24 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   magic-string:
     specifier: ^0.30.5
     version: 0.30.5
   svgo:
-    specifier: ^3.1.0
-    version: 3.1.0
+    specifier: ^3.2.0
+    version: 3.2.0
   xml2js:
     specifier: ^0.6.2
     version: 0.6.2
 
 devDependencies:
   '@types/node':
-    specifier: ^20.10.5
-    version: 20.10.5
+    specifier: ^20.11.8
+    version: 20.11.8
   '@types/xml2js':
     specifier: ^0.4.14
     version: 0.4.14
@@ -25,8 +29,8 @@ devDependencies:
     specifier: ^5.3.3
     version: 5.3.3
   vite:
-    specifier: ^3.2.7
-    version: 3.2.7(@types/node@20.10.5)
+    specifier: ^3.2.8
+    version: 3.2.8(@types/node@20.11.8)
 
 packages:
 
@@ -57,8 +61,8 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: false
 
-  /@types/node@20.10.5:
-    resolution: {integrity: sha512-nNPsNE65wjMxEKI93yOP+NPGGBJz/PoN3kZsVLee0XMiJolxSekEVD8wRwBUBqkwc7UWop0edW50yrCQW4CyRw==}
+  /@types/node@20.11.8:
+    resolution: {integrity: sha512-i7omyekpPTNdv4Jb/Rgqg0RU8YqLcNsI12quKSDkRXNfx7Wxdm6HhK1awT3xTgEkgxPn3bvnSpiEAc7a7Lpyow==}
     dependencies:
       undici-types: 5.26.5
     dev: true
@@ -66,7 +70,7 @@ packages:
   /@types/xml2js@0.4.14:
     resolution: {integrity: sha512-4YnrRemBShWRO2QjvUin8ESA41rH+9nQGLUGZV/1IDhi3SL9OhdpNC/MrulTWuptXKwhx/aDxE7toV0f/ypIXQ==}
     dependencies:
-      '@types/node': 20.10.5
+      '@types/node': 20.11.8
     dev: true
 
   /boolbase@1.0.0:
@@ -417,8 +421,8 @@ packages:
   /picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
 
-  /postcss@8.4.32:
-    resolution: {integrity: sha512-D/kj5JNu6oo2EIy+XL/26JEDTlIbB8hw85G8StOE6L74RQAVVP5rej6wxCNqyMbR4RkPfqvezVbPw81Ngd6Kcw==}
+  /postcss@8.4.33:
+    resolution: {integrity: sha512-Kkpbhhdjw2qQs2O2DGX+8m5OVqEcbB9HRBvuYM9pgrjEFUg30A9LmXNlTAUj4S9kgtGyrMbTzVjH7E+s5Re2yg==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
       nanoid: 3.3.7
@@ -456,8 +460,8 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /svgo@3.1.0:
-    resolution: {integrity: sha512-R5SnNA89w1dYgNv570591F66v34b3eQShpIBcQtZtM5trJwm1VvxbIoMpRYY3ybTAutcKTLEmTsdnaknOHbiQA==}
+  /svgo@3.2.0:
+    resolution: {integrity: sha512-4PP6CMW/V7l/GmKRKzsLR8xxjdHTV4IMvhTnpuHwwBazSIlw5W/5SmPjN8Dwyt7lKbSJrRDgp4t9ph0HgChFBQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
@@ -480,8 +484,8 @@ packages:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
     dev: true
 
-  /vite@3.2.7(@types/node@20.10.5):
-    resolution: {integrity: sha512-29pdXjk49xAP0QBr0xXqu2s5jiQIXNvE/xwd0vUizYT2Hzqe4BksNNoWllFVXJf4eLZ+UlVQmXfB4lWrc+t18g==}
+  /vite@3.2.8(@types/node@20.11.8):
+    resolution: {integrity: sha512-EtQU16PLIJpAZol2cTLttNP1mX6L0SyI0pgQB1VOoWeQnMSvtiwovV3D6NcjN8CZQWWyESD2v5NGnpz5RvgOZA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -505,9 +509,9 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 20.10.5
+      '@types/node': 20.11.8
       esbuild: 0.15.18
-      postcss: 8.4.32
+      postcss: 8.4.33
       resolve: 1.22.8
       rollup: 2.79.1
     optionalDependencies:

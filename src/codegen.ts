@@ -77,7 +77,34 @@ const codegen = {
 				import { forwardRef } from 'preact/compat';
 				export default /*@__PURE__*/ forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${viewBox}' }, h('use', { href: ${symbol} })));
 			`
-	}
+	},
+	vue: {
+		dev: (xml: any): string => `
+			import { createElementVNode, mergeProps, openBlock, createElementBlock } from 'vue';
+
+			export default {
+				render: function (ctx) {
+					return (
+						openBlock(),
+						createElementBlock('svg', mergeProps({ 'view-box': '${xml.svg.$.viewBox}' }, ctx.$props, { innerHTML: ${renderHtml(xml, true)} }), null, 16)
+					)
+				} 
+			}
+		`,
+		prod: (viewBox: string, symbol: string): string => `
+			import { createElementVNode, mergeProps, openBlock, createElementBlock } from 'vue';
+
+			const hoisted_use = /*@__PURE__*/ createElementVNode("use", { href: ${symbol} }, null, -1)
+			export default {
+				render: function (ctx) {
+					return (
+						openBlock(),
+						createElementBlock('svg', mergeProps({ 'view-box': '${viewBox}' }, ctx.$props), [ hoisted_use ], 16)
+					)
+				} 
+			}
+		`
+	},
 }
 
 export function inlineSymbol (xml: any): string {
