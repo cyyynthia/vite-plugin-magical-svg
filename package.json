@@ -4,7 +4,10 @@
 	"description": "An all-in-one Vite plugin that magically makes working with SVGs and bundling them a breeze",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"repository": "https://github.com/cyyynthia/vite-plugin-magical-svg",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/cyyynthia/vite-plugin-magical-svg.git"
+	},
 	"author": "Cynthia <cynthia@cynthia.dev>",
 	"license": "BSD-3-Clause",
 	"keywords": [
