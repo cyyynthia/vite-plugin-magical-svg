@@ -1,6 +1,6 @@
 {
 	"name": "vite-plugin-magical-svg",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "An all-in-one Vite plugin that magically makes working with SVGs and bundling them a breeze",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",

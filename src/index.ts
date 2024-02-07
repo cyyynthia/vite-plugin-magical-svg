@@ -136,6 +136,7 @@ function generateFilename (template: AssetName, file: string, raw: string) {
 
 function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 	let fileName: AssetName = 'assets/[name].[hash].[ext]'
+	let base = '/'
 	let sourcemap = false
 	let serve = false
 
@@ -151,7 +152,8 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 		name: 'vite-plugin-magical-svg',
 		enforce: 'pre',
 		configResolved (cfg) {
-			sourcemap = Boolean(cfg.build.sourcemap)
+			base = cfg.base ?? base
+			sourcemap = !!cfg.build.sourcemap
 			const { output } = cfg.build.rollupOptions
 
 			if (cfg.command === 'serve') {
@@ -272,7 +274,7 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				magicString.overwrite(
 					match.index,
 					match.index + match[0].length,
-					JSON.stringify(`/${files.get(assetId)}#${match[1]}`)
+					JSON.stringify(`${base}${files.get(assetId)}#${match[1]}`)
 				)
 			}
 
@@ -295,11 +297,11 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 						const file = files.get(url.searchParams.get('sprite') || 'sprite')
 						if (!file) return null
 
-						return `/${file}#${symbolIds.get(ref)}`
+						return `${base}${file}#${symbolIds.get(ref)}`
 					}
 
 					const file = files.get(ref)
-					return file ? `/${file}` : null
+					return file ? `${base}${file}` : null
 				})
 
 				const builder = new Builder()
