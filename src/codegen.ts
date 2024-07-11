@@ -38,72 +38,73 @@ function renderHtml (xml: any, useSymbol: boolean) {
 const codegen = {
 	dom: {
 		dev: (xml: any): string => `
-				export default function () {
-					const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-					svg.setAttribute('viewBox', '${xml.svg.$.viewBox}')
-					svg.innerHTML = ${renderHtml(xml, true)}
-					return svg
-				}
+				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/dom.js';
+				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
 			`,
 		prod: (viewBox: string, symbol: string): string => `
-				export default function () {
-					const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-					const use = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-					svg.setAttribute('viewBox', '${viewBox}')
-					use.setAttribute('href', ${symbol})
-					svg.appendChild(use)
-					return svg
-				}
+				import { createSvg } from 'vite-plugin-magical-svg/runtime/dom.js';
+				export default createSvg('${viewBox}', ${symbol});
 			`
 	},
 	react: {
 		dev: (xml: any): string => `
-				import { createElement, forwardRef } from 'react';
-				export default forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }));
+				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react.js';
+				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
 			`,
 		prod: (viewBox: string, symbol: string): string => `
-				import { createElement, forwardRef } from 'react';
-				export default /*@__PURE__*/ forwardRef((props, ref) => createElement('svg', { ...props, ref, viewBox: '${viewBox}' }, createElement('use', { href: ${symbol} })));
+				import { createSvg } from 'vite-plugin-magical-svg/runtime/react.js';
+				export default createSvg('${viewBox}', ${symbol});
+			`
+	},
+	'react-jsx': {
+		dev: (xml: any): string => `
+				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react-jsx.js';
+				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
+			`,
+		prod: (viewBox: string, symbol: string): string => `
+				import { createSvg } from 'vite-plugin-magical-svg/runtime/react-jsx.js';
+				export default createSvg('${viewBox}', ${symbol});
 			`
 	},
 	preact: {
 		dev: (xml: any): string => `
-				import { h } from 'preact';
-				import { forwardRef } from 'preact/compat';
-				export default forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${xml.svg.$.viewBox}', dangerouslySetInnerHTML: { __html: ${renderHtml(xml, true)} } }));
+				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/preact.js';
+				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
 			`,
 		prod: (viewBox: string, symbol: string): string => `
-				import { h } from 'preact';
-				import { forwardRef } from 'preact/compat';
-				export default /*@__PURE__*/ forwardRef((props, ref) => h('svg', { ...props, ref, viewBox: '${viewBox}' }, h('use', { href: ${symbol} })));
+				import { createSvg } from 'vite-plugin-magical-svg/runtime/preact.js';
+				export default createSvg('${viewBox}', ${symbol});
+			`
+	},
+	'preact-jsx': {
+		dev: (xml: any): string => `
+				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/preact-jsx.js';
+				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
+			`,
+		prod: (viewBox: string, symbol: string): string => `
+				import { createSvg } from 'vite-plugin-magical-svg/runtime/preact-jsx.js';
+				export default createSvg('${viewBox}', ${symbol});
 			`
 	},
 	vue: {
 		dev: (xml: any): string => `
-			import { createElementVNode, mergeProps, openBlock, createElementBlock } from 'vue';
-
-			export default {
-				render: function (ctx) {
-					return (
-						openBlock(),
-						createElementBlock('svg', mergeProps({ 'view-box': '${xml.svg.$.viewBox}' }, ctx.$props, { innerHTML: ${renderHtml(xml, true)} }), null, 16)
-					)
-				} 
-			}
-		`,
+				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/vue.js';
+				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
+			`,
 		prod: (viewBox: string, symbol: string): string => `
-			import { createElementVNode, mergeProps, openBlock, createElementBlock } from 'vue';
-
-			const hoisted_use = /*@__PURE__*/ createElementVNode("use", { href: ${symbol} }, null, -1)
-			export default {
-				render: function (ctx) {
-					return (
-						openBlock(),
-						createElementBlock('svg', mergeProps({ 'view-box': '${viewBox}' }, ctx.$props), [ hoisted_use ], 16)
-					)
-				} 
-			}
-		`
+				import { createSvg } from 'vite-plugin-magical-svg/runtime/vue.js';
+				export default createSvg('${viewBox}', ${symbol});
+			`
+	},
+	'vue-raw': {
+		dev: (xml: any): string => `
+				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/vue-raw.js';
+				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
+			`,
+		prod: (viewBox: string, symbol: string): string => `
+				import { createSvg } from 'vite-plugin-magical-svg/runtime/vue-raw.js';
+				export default createSvg('${viewBox}', ${symbol});
+			`
 	},
 }
 
