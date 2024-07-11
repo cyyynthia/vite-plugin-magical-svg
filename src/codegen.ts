@@ -43,6 +43,7 @@ export type SupportedTarget =
 	| 'preact-jsx'
 	| 'vue'
 	| 'vue-raw'
+	| 'solid'
 
 export function generateDev (target: SupportedTarget, xml: any): string {
 	return `
