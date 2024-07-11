@@ -38,11 +38,11 @@ import { optimize as svgoOptimize } from 'svgo'
 import MagicString from 'magic-string'
 
 import resolve from './resolve.js'
-import Generators, { inlineSymbol } from './codegen.js'
+import { generateDev, generateProd, inlineSymbol, SupportedTarget } from './codegen.js'
 
 type SymbolIdGenerator = (file: string, raw: string) => string | null | void
 export type MagicalSvgConfig = {
-	target?: keyof typeof Generators,
+	target?: SupportedTarget,
 	symbolId?: SymbolIdGenerator,
 	svgo?: boolean
 }
@@ -228,7 +228,7 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				}
 			}
 
-			const generator = Generators[config.target ?? 'dom']
+			const target = config.target ?? 'dom'
 			const preamble = code.slice(0, exportIndex)
 			if (serve) {
 				const asset = assets.get(id)!
@@ -237,13 +237,13 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				if (assetId === 'inline') {
 					asset.xml.svg.$.id = createHash('sha256').update(id).digest('hex').slice(0, 8)
 					return {
-						code: [ preamble, generator.prod(asset.xml.svg.$.viewBox, `'#${asset.xml.svg.$.id}'`), inlineSymbol(asset.xml) ].join('\n'),
+						code: [ preamble, generateProd(target, asset.xml.svg.$.viewBox, `'#${asset.xml.svg.$.id}'`), inlineSymbol(asset.xml) ].join('\n'),
 						map: { mappings: '' },
 					}
 				}
 
 				return {
-					code: [ preamble, generator.dev(asset.xml) ].join('\n'),
+					code: [ preamble, generateDev(target, asset.xml) ].join('\n'),
 					map: { mappings: '' },
 				}
 			}
@@ -251,7 +251,7 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 			const symbolId = symbolIds.get(id)!
 			if (assetId === 'inline') {
 				return {
-					code: [ preamble, generator.prod(viewBoxes.get(id)!, `'#${symbolId}'`) ].join('\n'),
+					code: [ preamble, generateProd(target, viewBoxes.get(id)!, `'#${symbolId}'`) ].join('\n'),
 					map: { mappings: '' },
 				}
 			}
@@ -260,7 +260,7 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 			const asset = assets.get(assetId)!
 			files.set(assetId, generateFilename(fileName, `${assetId}.svg`, asset.sources.sort().join('')))
 			return {
-				code: [ preamble, generator.prod(viewBoxes.get(id)!, `__MAGICAL_SVG_SPRITE__${symbolId}__`) ].join('\n'),
+				code: [ preamble, generateProd(target, viewBoxes.get(id)!, `__MAGICAL_SVG_SPRITE__${symbolId}__`) ].join('\n'),
 				map: { mappings: '' },
 			}
 		},

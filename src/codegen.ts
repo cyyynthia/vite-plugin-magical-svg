@@ -35,77 +35,27 @@ function renderHtml (xml: any, useSymbol: boolean) {
 		: JSON.stringify(symbol)
 }
 
-const codegen = {
-	dom: {
-		dev: (xml: any): string => `
-				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/dom.js';
-				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
-			`,
-		prod: (viewBox: string, symbol: string): string => `
-				import { createSvg } from 'vite-plugin-magical-svg/runtime/dom.js';
-				export default createSvg('${viewBox}', ${symbol});
-			`
-	},
-	react: {
-		dev: (xml: any): string => `
-				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react.js';
-				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
-			`,
-		prod: (viewBox: string, symbol: string): string => `
-				import { createSvg } from 'vite-plugin-magical-svg/runtime/react.js';
-				export default createSvg('${viewBox}', ${symbol});
-			`
-	},
-	'react-jsx': {
-		dev: (xml: any): string => `
-				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react-jsx.js';
-				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
-			`,
-		prod: (viewBox: string, symbol: string): string => `
-				import { createSvg } from 'vite-plugin-magical-svg/runtime/react-jsx.js';
-				export default createSvg('${viewBox}', ${symbol});
-			`
-	},
-	preact: {
-		dev: (xml: any): string => `
-				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/preact.js';
-				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
-			`,
-		prod: (viewBox: string, symbol: string): string => `
-				import { createSvg } from 'vite-plugin-magical-svg/runtime/preact.js';
-				export default createSvg('${viewBox}', ${symbol});
-			`
-	},
-	'preact-jsx': {
-		dev: (xml: any): string => `
-				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/preact-jsx.js';
-				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
-			`,
-		prod: (viewBox: string, symbol: string): string => `
-				import { createSvg } from 'vite-plugin-magical-svg/runtime/preact-jsx.js';
-				export default createSvg('${viewBox}', ${symbol});
-			`
-	},
-	vue: {
-		dev: (xml: any): string => `
-				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/vue.js';
-				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
-			`,
-		prod: (viewBox: string, symbol: string): string => `
-				import { createSvg } from 'vite-plugin-magical-svg/runtime/vue.js';
-				export default createSvg('${viewBox}', ${symbol});
-			`
-	},
-	'vue-raw': {
-		dev: (xml: any): string => `
-				import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/vue-raw.js';
-				export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
-			`,
-		prod: (viewBox: string, symbol: string): string => `
-				import { createSvg } from 'vite-plugin-magical-svg/runtime/vue-raw.js';
-				export default createSvg('${viewBox}', ${symbol});
-			`
-	},
+export type SupportedTarget =
+	| 'dom'
+	| 'react'
+	| 'react-jsx'
+	| 'preact'
+	| 'preact-jsx'
+	| 'vue'
+	| 'vue-raw'
+
+export function generateDev (target: SupportedTarget, xml: any): string {
+	return `
+		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/${target}.js';
+		export default createSvgDEV('${xml.svg.$.viewBox}', ${renderHtml(xml, true)});
+	`
+}
+
+export function generateProd (target: SupportedTarget, viewBox: string, symbol: string): string {
+	return `
+		import { createSvg } from 'vite-plugin-magical-svg/runtime/${target}.js';
+		export default createSvg('${viewBox}', ${symbol});
+	`
 }
 
 export function inlineSymbol (xml: any): string {
