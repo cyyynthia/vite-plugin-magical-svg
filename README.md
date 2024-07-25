@@ -95,6 +95,10 @@ import fileUrl from './assets/icon.svg?file' // Works like .png and other file i
 </svg>
 ```
 
+### Tree-shaking
+If you import an icon but end up not using it, the icon will not be included in the final sprites. If tree-shaking has
+been disabled in your config, then all imported icons will be included regardless if they've been used or not.
+
 ### `exports` note
 This plugin **does not** respect the `exports` field when importing svg files from third-party packages such as
 `simple-icons`, which do not expose them.

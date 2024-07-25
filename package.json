@@ -1,9 +1,9 @@
 {
 	"name": "vite-plugin-magical-svg",
 	"license": "BSD-3-Clause",
-	"version": "1.3.0",
+	"version": "1.4.0",
 	"description": "An all-in-one Vite plugin that magically makes working with SVGs and bundling them a breeze",
-	"author": "Cynthia <cynthia@cynthia.dev> (https://cynthia.dev)",
+	"author": "Cynthia <cynthia@cynthia.dev>",
 	"repository": "github:cyyynthia/vite-plugin-magical-svg",
 	"bugs": "https://github.com/cyyynthia/vite-plugin-magical-svg/issues",
 	"funding": "https://github.com/sponsors/cyyynthia",
