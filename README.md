@@ -71,6 +71,8 @@ export default defineConfig({
 
 #### Targets
 - `dom` (default): exports a function you can call (takes no arguments) and returns a DOM element.
+- `react19`: exports a functional React component (classic runtime)
+- `react19-jsx`: exports a functional React component (automatic runtime)
 - `react`: exports a functional React component (classic runtime; wrapped in `forwardRef`)
 - `react-jsx`: exports a functional React component (automatic runtime; wrapped in `forwardRef`)
 - `preact`: exports a functional Preact component (classic runtime; wrapped in `forwardRef`)

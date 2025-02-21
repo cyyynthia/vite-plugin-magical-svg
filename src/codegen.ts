@@ -39,6 +39,8 @@ function renderHtml (xml: any, useSymbol: boolean) {
 
 export type SupportedTarget =
 	| 'dom'
+	| 'react19'
+	| 'react19-jsx'
 	| 'react'
 	| 'react-jsx'
 	| 'preact'
