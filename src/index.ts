@@ -279,6 +279,16 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 					usedAssets.set(spriteId, new Set())
 				}
 
+				if (spriteId !== 'inline') {
+					// Clean (common) useless attributes
+					// Don't do this for the inline sprite as this would be a breaking change
+					// + it may be useful for JS code :shrug:
+					for (const attr of Object.keys(xml.svg.$)) {
+						if (attr === 'class' || attr.startsWith('aria-') || attr.startsWith('data-'))
+							delete xml.svg.$[attr]
+					}
+				}
+
 				sprite.xml.svg.symbol.push(xml.svg)
 				sprite.sources.push(raw)
 				symbolIds.set(id, xml.svg.$.id)
