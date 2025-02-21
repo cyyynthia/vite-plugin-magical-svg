@@ -174,6 +174,7 @@ function generateFilename (template: AssetName, file: string, raw: string) {
 function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 	let fileName: AssetName = 'assets/[name].[hash].[ext]'
 	let base = '/'
+	let treeshake = true
 	let sourcemap = false
 	let serve = false
 
@@ -186,6 +187,8 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 	const files = new Map<string, string>()
 	const sprites = new Map<string, string>()
 
+	const usedAssets = new Map<string, Set<string>>()
+
 	return {
 		name: 'vite-plugin-magical-svg',
 		enforce: 'pre',
@@ -193,6 +196,8 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 			ROOT = cfg.root ?? ROOT
 			base = cfg.base ?? base
 			sourcemap = !!cfg.build.sourcemap
+			treeshake = cfg.build.rollupOptions.treeshake !== false
+
 			const { output } = cfg.build.rollupOptions
 
 			if (cfg.command === 'serve') {
@@ -256,6 +261,7 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 			if (url.searchParams.has('file') || serve) {
 				assets.set(id, { sources: [], xml: xml })
+				usedAssets.set(id, new Set())
 			} else {
 				const spriteId = url.searchParams.get('sprite') ?? 'sprite'
 				const sprite = assets.get(spriteId) ?? {
@@ -268,7 +274,11 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 					}
 				}
 
-				if (!assets.has(spriteId)) assets.set(spriteId, sprite)
+				if (!assets.has(spriteId)) {
+					assets.set(spriteId, sprite)
+					usedAssets.set(spriteId, new Set())
+				}
+
 				sprite.xml.svg.symbol.push(xml.svg)
 				sprite.sources.push(raw)
 				symbolIds.set(id, xml.svg.$.id)
@@ -276,7 +286,10 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 			const imp = imports.map((i) => `import ${JSON.stringify(i)};`).join('\n')
 			const file = generateFilename(fileName, filePath, raw)
-			return `${imp}\nexport default ${JSON.stringify(`/${file}`)}`
+			return {
+				code: `${imp}\nexport default ${JSON.stringify(`/${file}`)}`,
+				moduleSideEffects: false,
+			}
 		},
 		async transform (code, id) {
 			const url = new URL(`file:///${id}`)
@@ -367,6 +380,10 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				magicString = magicString || (magicString = new MagicString(code))
 				const assetId = sprites.get(match[1])!
 
+				// Mark the symbol as used (for tree-shaking)
+				const used = usedAssets.get(assetId)!
+				used.add(match[1])
+
 				magicString.overwrite(
 					match.index,
 					match.index + match[0].length,
@@ -387,6 +404,19 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				if (assetId === 'inline') continue
 
 				const asset = assets.get(assetId)!
+
+				// Treeshake symbols
+				if (treeshake) {
+					if (asset.xml.svg.symbol) {
+						const used = usedAssets.get(assetId)!
+						asset.xml.svg.symbol = asset.xml.svg.symbol.filter((s: any) => used.has(s.$.id))
+					} else {
+						// This is a file. We can know if the file has been tree-shaken by checking `isIncluded`.
+						const mdl = this.getModuleInfo(assetId)
+						if (!mdl?.isIncluded) continue // Skip the file
+					}
+				}
+
 				await transformRefs(asset.xml.svg, async (ref, isFile) => {
 					if (!isFile) {
 						const url = new URL(`file:///${ref}`)
