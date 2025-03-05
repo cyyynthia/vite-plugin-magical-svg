@@ -19,8 +19,8 @@ importers:
         version: 0.6.2
     devDependencies:
       '@types/node':
-        specifier: ^22.13.4
-        version: 22.13.4
+        specifier: ^22.13.9
+        version: 22.13.9
       '@types/xml2js':
         specifier: ^0.4.14
         version: 0.4.14
@@ -28,11 +28,11 @@ importers:
         specifier: ^2.79.2
         version: 2.79.2
       typescript:
-        specifier: ^5.7.3
-        version: 5.7.3
+        specifier: ^5.8.2
+        version: 5.8.2
       vite:
         specifier: ^3.2.11
-        version: 3.2.11(@types/node@22.13.4)
+        version: 3.2.11(@types/node@22.13.9)
 
 packages:
 
@@ -55,8 +55,8 @@ packages:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
 
-  '@types/node@22.13.4':
-    resolution: {integrity: sha512-ywP2X0DYtX3y08eFVx5fNIw7/uIv8hYUKgXoK8oayJlLnKcRfEYCxWMVE1XagUdVtCJlZT1AU4LXEABW+L1Peg==}
+  '@types/node@22.13.9':
+    resolution: {integrity: sha512-acBjXdRJ3A6Pb3tqnw9HZmyR3Fiol3aGxRCK1x3d+6CDAMjl7I649wpSd+yNURCjbOUGu9tqtLKnTGxmK6CyGw==}
 
   '@types/xml2js@0.4.14':
     resolution: {integrity: sha512-4YnrRemBShWRO2QjvUin8ESA41rH+9nQGLUGZV/1IDhi3SL9OhdpNC/MrulTWuptXKwhx/aDxE7toV0f/ypIXQ==}
@@ -298,8 +298,8 @@ packages:
     engines: {node: '>=14.0.0'}
     hasBin: true
 
-  typescript@5.7.3:
-    resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}
+  typescript@5.8.2:
+    resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -351,13 +351,13 @@ snapshots:
 
   '@trysound/sax@0.2.0': {}
 
-  '@types/node@22.13.4':
+  '@types/node@22.13.9':
     dependencies:
       undici-types: 6.20.0
 
   '@types/xml2js@0.4.14':
     dependencies:
-      '@types/node': 22.13.4
+      '@types/node': 22.13.9
 
   boolbase@1.0.0: {}
 
@@ -555,18 +555,18 @@ snapshots:
       csso: 5.0.5
       picocolors: 1.1.1
 
-  typescript@5.7.3: {}
+  typescript@5.8.2: {}
 
   undici-types@6.20.0: {}
 
-  vite@3.2.11(@types/node@22.13.4):
+  vite@3.2.11(@types/node@22.13.9):
     dependencies:
       esbuild: 0.15.18
       postcss: 8.5.3
       resolve: 1.22.10
       rollup: 2.79.2
     optionalDependencies:
-      '@types/node': 22.13.4
+      '@types/node': 22.13.9
       fsevents: 2.3.3
 
   xml2js@0.6.2:

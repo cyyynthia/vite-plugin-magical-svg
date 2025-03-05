@@ -57,6 +57,7 @@ export default defineConfig({
 
 			// *Experimental* - replace all instances of `fill="..."` and `stroke="..."`.
 			// Set to `true` for 'currentColor`, or use a text value to set it to this value.
+			// When enabled, use query param ?skip-recolor to not alter colors.
 			// Disabled by default.
 			setFillStrokeColor: true,
 

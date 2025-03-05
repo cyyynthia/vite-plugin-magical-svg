@@ -239,7 +239,7 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 			}
 
 			// Transform fill and stroke if configured
-			if (config.setFillStrokeColor) {
+			if (config.setFillStrokeColor && !url.searchParams.has('skip-recolor')) {
 				await setFillStrokeColor(config.setFillStrokeColor, xml)
 			}
 
