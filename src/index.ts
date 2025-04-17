@@ -26,13 +26,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { Plugin } from 'vite'
+import type { Plugin, FilterPattern } from 'vite'
 import type { PluginContext, OutputOptions } from 'rollup'
 import type { Config } from 'svgo'
-import { fileURLToPath } from 'url'
-import { createHash } from 'crypto'
-import { readFile } from 'fs/promises'
-import { basename, extname, relative } from 'path'
+
+import { createHash } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
+import { basename, extname, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+import { createFilter } from 'vite'
 import { Builder, parseStringPromise as parseXml } from 'xml2js'
 import { optimize as svgoOptimize } from 'svgo'
 import MagicString from 'magic-string'
@@ -42,6 +45,8 @@ import { generateDev, generateProd, inlineSymbol, SupportedTarget } from './code
 
 type SymbolIdGenerator = (file: string, raw: string) => string | null | void
 export type MagicalSvgConfig = {
+	include?: FilterPattern | undefined
+	exclude?: FilterPattern | undefined
 	target?: SupportedTarget,
 	symbolId?: SymbolIdGenerator,
 	svgo?: boolean,
@@ -178,6 +183,8 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 	let sourcemap = false
 	let serve = false
 
+	const filter = createFilter(config.include, config.exclude)
+
 	const assets = new Map<string, SvgAsset>()
 
 	type ViewBoxInfo = { viewBox: string, width: string, height: string }
@@ -221,6 +228,7 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 		},
 		resolveId (id, importer) {
 			if (!importer || !id.endsWith('.svg') || id.startsWith('.') || id.startsWith('/')) return
+			if (!filter(id)) return
 
 			// I'm implementing my own naive resolve as I need to *avoid* `exports` compliance
 			// which is something Vite's resolver won't let me do it seems :<
@@ -228,7 +236,7 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 		},
 		async load (id) {
 			const url = new URL(`file:///${id}`)
-			if (!url.pathname.endsWith('.svg')) return null
+			if (!filter(id) || !url.pathname.endsWith('.svg')) return null
 
 			const filePath = fileURLToPath(url)
 			const [ raw, xml, imports ] = await load(this, filePath, serve, config.symbolId)
@@ -303,7 +311,7 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 		},
 		async transform (code, id) {
 			const url = new URL(`file:///${id}`)
-			if (!url.pathname.endsWith('.svg')) return null
+			if (!filter(id) || !url.pathname.endsWith('.svg')) return null
 			const assetId = url.searchParams.has('file') ? id : url.searchParams.get('sprite') ?? 'sprite'
 
 			const exportIndex = code.indexOf('export default')
@@ -405,8 +413,7 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 			return {
 				code: magicString.toString(),
-				// .toString() to make TS happy :shrug:
-				map: sourcemap ? magicString.generateMap({ hires: true }).toString() : null
+				map: sourcemap ? magicString.generateMap({ hires: true }) : null
 			}
 		},
 		async generateBundle () {
