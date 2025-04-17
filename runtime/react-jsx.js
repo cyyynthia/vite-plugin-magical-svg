@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { jsx } from "react/jsx-runtime";
 
-export var createSvg = /*@__NO_SIDE_EFFECTS__*/ (viewBox, width, height, symbol) => {
+export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, symbol) => {
 	let node = jsx("use", { href: symbol });
 
 	return forwardRef((props, ref) => {
@@ -9,7 +9,7 @@ export var createSvg = /*@__NO_SIDE_EFFECTS__*/ (viewBox, width, height, symbol)
 	});
 };
 
-export var createSvgDEV = /*@__NO_SIDE_EFFECTS__*/ (viewBox, width, height, xml) => {
+export var createSvgDEV = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, xml) => {
 	return forwardRef((props, ref) => {
 		return jsx("svg", {
 			ref,
