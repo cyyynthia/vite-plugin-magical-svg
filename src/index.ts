@@ -176,7 +176,7 @@ function generateFilename (template: AssetName, file: string, raw: string) {
 	})
 }
 
-function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
+export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 	let fileName: AssetName = 'assets/[name].[hash].[ext]'
 	let base = '/'
 	let treeshake = true
@@ -225,6 +225,8 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				const svg = new Builder({ headless: true }).buildObject(inline.xml)
 				return head + svg + body
 			}
+
+			return
 		},
 		resolveId (id, importer) {
 			if (!importer || !id.endsWith('.svg') || id.startsWith('.') || id.startsWith('/')) return
@@ -396,11 +398,13 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 			let magicString
 			while ((match = ASSET_RE.exec(code))) {
 				magicString = magicString || (magicString = new MagicString(code))
-				const assetId = sprites.get(match[1])!
+
+				const spriteId = match[1]!
+				const assetId = sprites.get(spriteId)!
 
 				// Mark the symbol as used (for tree-shaking)
 				const used = usedAssets.get(assetId)!
-				used.add(match[1])
+				used.add(spriteId)
 
 				magicString.overwrite(
 					match.index,
@@ -486,7 +490,7 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 				this.emitFile({
 					type: 'asset',
-					fileName: files.get(assetId),
+					fileName: files.get(assetId)!,
 					source: xml
 				})
 			}
@@ -495,5 +499,3 @@ function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 }
 
 export default magicalSvgPlugin
-// @ts-expect-error -- https://github.com/microsoft/TypeScript/issues/31780
-export = magicalSvgPlugin

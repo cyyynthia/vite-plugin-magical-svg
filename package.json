@@ -1,7 +1,7 @@
 {
 	"name": "vite-plugin-magical-svg",
 	"license": "BSD-3-Clause",
-	"version": "1.7.0",
+	"version": "1.7.1",
 	"description": "An all-in-one Vite plugin that magically makes working with SVGs and bundling them a breeze",
 	"author": "Cynthia <cynthia@cynthia.dev>",
 	"repository": "github:cyyynthia/vite-plugin-magical-svg",
@@ -14,11 +14,12 @@
 		"svgr",
 		"svg"
 	],
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
-	"packageManager": "pnpm@10.8.1",
+	"type": "module",
+	"packageManager": "pnpm@10.11.1",
 	"scripts": {
-		"build": "tsc",
+		"build": "pnpm run build:mjs && pnpm run build:cjs",
+		"build:mjs": "tsc",
+		"build:cjs": "esbuild dist/index.js --bundle --external:vite --external:svgo --external:xml2js --external:magic-string --platform=node --target=node18 --format=cjs --outfile=dist/index.cjs",
 		"update-gha": "pin-github-action .github/workflows"
 	},
 	"dependencies": {
@@ -27,14 +28,30 @@
 		"xml2js": "^0.6.2"
 	},
 	"devDependencies": {
-		"@types/node": "^22.14.1",
+		"@tsconfig/node-lts": "^22.0.1",
+		"@tsconfig/strictest": "^2.0.5",
+		"@types/node": "^22.15.29",
 		"@types/xml2js": "^0.4.14",
-		"pin-github-action": "^3.1.2",
+		"esbuild": "^0.25.5",
+		"pin-github-action": "^3.3.1",
 		"rollup": "2.75.6",
 		"typescript": "^5.8.3",
 		"vite": "3.0.0"
 	},
 	"peerDependencies": {
 		"vite": ">= 3.0.0"
+	},
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		"types": "./dist/index.d.ts",
+		"import": "./dist/index.js",
+		"require": "./dist/index.cjs"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild"
+		]
 	}
 }
