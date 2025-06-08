@@ -1,7 +1,7 @@
 {
 	"name": "vite-plugin-magical-svg",
 	"license": "BSD-3-Clause",
-	"version": "1.7.1",
+	"version": "1.7.2",
 	"description": "An all-in-one Vite plugin that magically makes working with SVGs and bundling them a breeze",
 	"author": "Cynthia <cynthia@cynthia.dev>",
 	"repository": "github:cyyynthia/vite-plugin-magical-svg",
@@ -45,9 +45,12 @@
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"exports": {
-		"types": "./dist/index.d.ts",
-		"import": "./dist/index.js",
-		"require": "./dist/index.cjs"
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		},
+		"./runtime/*.js": "./runtime/*.js"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
