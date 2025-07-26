@@ -59,11 +59,11 @@ export default defineConfig({
 
 			// By default, the svgs are optimized with svgo. You can disable this by setting this to false.
 			svgo: false,
-		
+
 			// By default, width and height set on SVGs are not preserved.
 			// Set to true to preserve `width` and `height` on the generated SVG.
 			preserveWidthHeight: false,
-			
+
 			// *Experimental* - set the width and height on generated SVGs.
 			// If used with `preserveWidthHeight`, will only apply to SVGs without a width/height.
 			setWidthHeight: { width: '24', height: '24' },
@@ -92,7 +92,10 @@ export default defineConfig({
 - `preact`: exports a functional Preact component (classic runtime; wrapped in `forwardRef`)
 - `preact-jsx`: exports a functional Preact component (automatic runtime; wrapped in `forwardRef`)
 - `vue`: exports a Vue component (as if it was a `.vue` file)
+- `vue-vapor`: exports a Vue Vapor[^vapor] component (as if it was a `.vue` file)
 - `solid`: exports a Solid component
+
+[^vapor]: Vue's high-performance subset introduced in Vue 3.6
 
 ### Use in code
 ```js
