@@ -46,12 +46,13 @@ export type SupportedTarget =
 	| 'preact'
 	| 'preact-jsx'
 	| 'vue'
+	| 'vue-vapor'
 	| 'solid'
 
 export function generateDev (target: SupportedTarget, xml: any): string {
 	return `
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/${target}.js';
-		export default createSvgDEV(
+		export default /*#__PURE__*/ createSvgDEV(
 			'${xml.svg.$.viewBox || ''}' || void 0,
 			'${xml.svg.$.width || ''}' || void 0,
 			'${xml.svg.$.height || ''}' || void 0,
@@ -63,7 +64,7 @@ export function generateDev (target: SupportedTarget, xml: any): string {
 export function generateProd (target: SupportedTarget, viewBox: XmlValue, width: XmlValue, height: XmlValue, symbol: string): string {
 	return `
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/${target}.js';
-		export default createSvg(
+		export default /*#__PURE__*/ createSvg(
 			'${viewBox || ''}' || void 0,
 			'${width || ''}' || void 0,
 			'${height || ''}' || void 0,
