@@ -61,7 +61,11 @@ type SvgAsset = { sources: string[], xml: any }
 type AssetName = NonNullable<OutputOptions['assetFileNames']>
 
 let ROOT = '/'
-const ASSET_RE = /__MAGICAL_SVG_SPRITE__([0-9a-f]{8})__/g
+const ASSET_RE = /__MAGICAL_SVG_SPRITE__(_[0-9a-f]{8})__/g
+
+function generateId(str: string) {
+	return '_' + createHash('sha256').update(str).digest('hex').slice(0, 8)
+}
 
 function traverseSvg (xml: any, handler: (tag: string, xml: any) => Promise<void> | void): Promise<any> {
 	if (typeof xml !== 'object') return Promise.resolve()
@@ -94,7 +98,7 @@ function transformRefs (xml: any, fn: (ref: string, isFile: boolean) => Promise<
 function hashSymbols (xml: any) {
 	return traverseSvg(xml, (tag, element) => {
 		if (tag === 'use' && element.$?.href) {
-			element.$.href = `#${createHash('sha256').update(element.$.href).digest('hex').slice(0, 8)}`
+			element.$.href = `#${generateId(element.$.href)}`
 		}
 	})
 }
@@ -149,7 +153,7 @@ async function load (ctx: PluginContext, file: string, serve: boolean, symbolIdG
 
 	if (typeof xml.svg !== 'object') xml.svg = { _: xml.svg }
 	xml.svg.$ = xml.svg.$ ?? {}
-	xml.svg.$.id = symbolIdGen?.(file, raw) || createHash('sha256').update(raw).digest('hex').slice(0, 8);
+	xml.svg.$.id = symbolIdGen?.(file, raw) || generateId(raw);
 
 	return [ raw, xml, imports ]
 }
@@ -333,7 +337,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				await hashSymbols(asset.xml.svg)
 
 				if (assetId === 'inline') {
-					asset.xml.svg.$.id = createHash('sha256').update(id).digest('hex').slice(0, 8)
+					asset.xml.svg.$.id = generateId(id)
 					return {
 						code: [
 							preamble,
@@ -462,7 +466,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 									overrides: {
 										cleanupNumericValues: false,
 										removeHiddenElems: false,
-										removeUselessDefs: files.has(assetId) ? false : void 0,
+										removeUselessDefs: files.has(assetId) ? false : null,
 										cleanupIds: {
 											minify: false,
 											remove: false,
@@ -471,6 +475,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 									},
 								},
 							},
+							'removeTitle',
 						],
 					}
 
