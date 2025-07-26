@@ -1,5 +1,5 @@
 // A solid-like use of <template> would be shorter, but this is done the "old" way to avoid relying on innerHTML
-// in production so that it can be used in places where there are strict policies about that (such as AMO)
+// in production so that it can be used in places where there have strict policies about that (such as AMO)
 
 export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, symbol) => {
 	let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
