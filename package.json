@@ -39,6 +39,7 @@
 		"provenance": true
 	},
 	"scripts": {
+		"test": "vitest",
 		"update-gha": "pin-github-action .github/workflows"
 	},
 	"dependencies": {
@@ -53,9 +54,10 @@
 		"@types/xml2js": "^0.4.14",
 		"pin-github-action": "^3.5.1",
 		"rolldown": "^1.1.5",
-		"rollup": "2.75.6",
+		"rollup": "^4.62.2",
 		"typescript": "^7.0.2",
-		"vite": "3.0.0"
+		"vite": "^8.1.4",
+		"vitest": "^4.1.10"
 	},
 	"peerDependencies": {
 		"vite": ">= 3.0.0"
