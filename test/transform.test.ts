@@ -2,14 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { Builder } from 'xml2js'
-import {
-	generateId,
-	parseSvg,
-	transformSvg,
-	setFillStrokeColor,
-	hashSymbols,
-	generateModuleCode
-} from '../src/transform.js'
+import { generateId, parseSvg, transformSvg, setFillStrokeColor, hashSymbols } from '../src/transform.js'
 
 const FIXTURES = resolve(import.meta.dirname, 'fixtures')
 const fixture = (name: string) => resolve(FIXTURES, name)

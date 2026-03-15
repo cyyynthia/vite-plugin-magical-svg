@@ -22,7 +22,7 @@
 		"build:cjs": "esbuild dist/index.js --bundle --external:vite --external:svgo --external:xml2js --external:magic-string --platform=node --target=node18 --format=cjs --outfile=dist/index.cjs",
 		"test": "vitest run",
 		"update-gha": "pin-github-action .github/workflows",
-		"prettier": "prettier --write ."
+		"format": "prettier --write ."
 	},
 	"dependencies": {
 		"magic-string": "^0.30.17",

@@ -30,11 +30,9 @@ import { Builder } from 'xml2js'
 
 type XmlValue = string | undefined
 
-function renderHtml (xml: any, useSymbol: boolean) {
+function renderHtml(xml: any, useSymbol: boolean) {
 	const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
-	return useSymbol
-		? JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
-		: JSON.stringify(symbol)
+	return useSymbol ? JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`) : JSON.stringify(symbol)
 }
 
 export type SupportedTarget =
@@ -49,7 +47,7 @@ export type SupportedTarget =
 	| 'vue-vapor'
 	| 'solid'
 
-export function generateDev (target: SupportedTarget, xml: any): string {
+export function generateDev(target: SupportedTarget, xml: any): string {
 	return `
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/${target}.js';
 		export default /*#__PURE__*/ createSvgDEV(
@@ -61,7 +59,13 @@ export function generateDev (target: SupportedTarget, xml: any): string {
 	`
 }
 
-export function generateProd (target: SupportedTarget, viewBox: XmlValue, width: XmlValue, height: XmlValue, symbol: string): string {
+export function generateProd(
+	target: SupportedTarget,
+	viewBox: XmlValue,
+	width: XmlValue,
+	height: XmlValue,
+	symbol: string
+): string {
 	return `
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/${target}.js';
 		export default /*#__PURE__*/ createSvg(
@@ -73,7 +77,7 @@ export function generateProd (target: SupportedTarget, viewBox: XmlValue, width:
 	`
 }
 
-export function inlineSymbol (xml: any): string {
+export function inlineSymbol(xml: any): string {
 	return `
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')

@@ -115,12 +115,12 @@ async function load(
 
 	if (typeof xml.svg !== 'object') xml.svg = { _: xml.svg }
 	xml.svg.$ = xml.svg.$ ?? {}
-	xml.svg.$.id = symbolIdGen?.(file, raw) || generateId(raw);
+	xml.svg.$.id = symbolIdGen?.(file, raw) || generateId(raw)
 
-	return [ raw, xml, imports ]
+	return [raw, xml, imports]
 }
 
-function generateFilename (template: AssetName, file: string, raw: string) {
+function generateFilename(template: AssetName, file: string, raw: string) {
 	if (typeof template === 'string') {
 		const ext = extname(file)
 		const name = basename(file, ext)
@@ -132,7 +132,7 @@ function generateFilename (template: AssetName, file: string, raw: string) {
 			.replace(/\[name]/g, name)
 			.replace(/\[extname]/g, ext)
 			.replace(/\[ext]/g, ext.slice(1))
-			.replace(/\[hash]/g, hash);
+			.replace(/\[hash]/g, hash)
 	}
 
 	return template({
@@ -145,7 +145,7 @@ function generateFilename (template: AssetName, file: string, raw: string) {
 	})
 }
 
-export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
+export function magicalSvgPlugin(config: MagicalSvgConfig = {}): Plugin {
 	let fileName: AssetName = 'assets/[name].[hash].[ext]'
 	let base = '/'
 	let treeshake = true
@@ -156,7 +156,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 	const assets = new Map<string, SvgAsset>()
 
-	type ViewBoxInfo = { viewBox: string, width: string, height: string }
+	type ViewBoxInfo = { viewBox: string; width: string; height: string }
 	const viewBoxes = new Map<string, ViewBoxInfo>()
 	const symbolIds = new Map<string, string>()
 
@@ -168,7 +168,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 	return {
 		name: 'vite-plugin-magical-svg',
 		enforce: 'pre',
-		configResolved (cfg) {
+		configResolved(cfg) {
 			ROOT = cfg.root ?? ROOT
 			base = cfg.base ?? base
 			sourcemap = !!cfg.build.sourcemap
@@ -183,7 +183,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				fileName = output.assetFileNames
 			}
 		},
-		async transformIndexHtml (html) {
+		async transformIndexHtml(html) {
 			if (assets.has('inline')) {
 				const inline = assets.get('inline')!
 				const bodyTagStart = html.indexOf('<body')
@@ -197,7 +197,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 			return
 		},
-		resolveId (id, importer) {
+		resolveId(id, importer) {
 			if (!importer || !id.endsWith('.svg') || id.startsWith('.') || id.startsWith('/')) return
 			if (!filter(id)) return
 
@@ -205,18 +205,19 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 			// which is something Vite's resolver won't let me do it seems :<
 			return resolve(id, importer)
 		},
-		async load (id) {
+		async load(id) {
 			const url = new URL(`file:///${id}`)
 			if (!filter(id) || !url.pathname.endsWith('.svg')) return null
 
 			const filePath = fileURLToPath(url)
-			const [ raw, xml, imports ] = await load(this, filePath, serve, config.symbolId)
+			const [raw, xml, imports] = await load(this, filePath, serve, config.symbolId)
 
 			const viewboxInfo = await transformSvg(xml, {
 				restoreMissingViewBox: config.restoreMissingViewBox,
-				setFillStrokeColor: url.searchParams.has('skip-recolor') ? false : config.setFillStrokeColor,
+				setFillStrokeColor: config.setFillStrokeColor,
 				preserveWidthHeight: config.preserveWidthHeight,
-				setWidthHeight: config.setWidthHeight
+				setWidthHeight: config.setWidthHeight,
+				skipRecolor: url.searchParams.has('skip-recolor')
 			})
 
 			viewBoxes.set(id, viewboxInfo)
@@ -246,8 +247,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 					// Don't do this for the inline sprite as this would be a breaking change
 					// + it may be useful for JS code :shrug:
 					for (const attr of Object.keys(xml.svg.$)) {
-						if (attr === 'class' || attr.startsWith('aria-') || attr.startsWith('data-'))
-							delete xml.svg.$[attr]
+						if (attr === 'class' || attr.startsWith('aria-') || attr.startsWith('data-')) delete xml.svg.$[attr]
 					}
 				}
 
@@ -260,13 +260,13 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 			const file = generateFilename(fileName, filePath, raw)
 			return {
 				code: `${imp}\nexport default ${JSON.stringify(`/${file}`)}`,
-				moduleSideEffects: false,
+				moduleSideEffects: false
 			}
 		},
-		async transform (code, id) {
+		async transform(code, id) {
 			const url = new URL(`file:///${id}`)
 			if (!filter(id) || !url.pathname.endsWith('.svg')) return null
-			const assetId = url.searchParams.has('file') ? id : url.searchParams.get('sprite') ?? 'sprite'
+			const assetId = url.searchParams.has('file') ? id : (url.searchParams.get('sprite') ?? 'sprite')
 
 			const exportIndex = code.indexOf('export default')
 			if (url.searchParams.has('file')) {
@@ -318,7 +318,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				map: { mappings: '' }
 			}
 		},
-		renderChunk (code) {
+		renderChunk(code) {
 			let match
 			let magicString
 			while ((match = ASSET_RE.exec(code))) {
@@ -345,7 +345,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				map: sourcemap ? magicString.generateMap({ hires: true }) : null
 			}
 		},
-		async generateBundle () {
+		async generateBundle() {
 			for (const assetId of assets.keys()) {
 				if (assetId === 'inline') continue
 
@@ -390,14 +390,14 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 										removeUselessDefs: files.has(assetId) ? false : null,
 										cleanupIds: {
 											minify: false,
-											remove: false,
+											remove: false
 										},
 										convertPathData: false
-									},
-								},
+									}
+								}
 							},
-							'removeTitle',
-						],
+							'removeTitle'
+						]
 					}
 
 					try {

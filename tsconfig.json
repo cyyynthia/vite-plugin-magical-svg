@@ -1,13 +1,10 @@
 {
-	"extends": [
-		"@tsconfig/strictest/tsconfig.json",
-		"@tsconfig/node-lts/tsconfig.json"
-	],
+	"extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node-lts/tsconfig.json"],
 	"compilerOptions": {
 		"declaration": true,
 		"isolatedModules": false,
 		"preserveConstEnums": false,
 		"outDir": "./dist"
 	},
-	"include": [ "src" ]
+	"include": ["src"]
 }

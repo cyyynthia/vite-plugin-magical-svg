@@ -30,7 +30,7 @@ import { dirname, resolve } from 'path'
 import { readdir } from 'fs/promises'
 import { existsSync } from 'fs'
 
-async function findPackageRoot (path: string) {
+async function findPackageRoot(path: string) {
 	do {
 		path = dirname(path)
 		const res = await readdir(path)
@@ -40,7 +40,7 @@ async function findPackageRoot (path: string) {
 	return null
 }
 
-export default async function dumbNodeResolve (id: string, importer: string) {
+export default async function dumbNodeResolve(id: string, importer: string) {
 	const pkgBase = await findPackageRoot(importer)
 	if (!pkgBase) return null
 
