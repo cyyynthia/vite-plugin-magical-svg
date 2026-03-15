@@ -20,7 +20,8 @@
 		"build": "pnpm run build:mjs && pnpm run build:cjs",
 		"build:mjs": "tsc",
 		"build:cjs": "esbuild dist/index.js --bundle --external:vite --external:svgo --external:xml2js --external:magic-string --platform=node --target=node18 --format=cjs --outfile=dist/index.cjs",
-		"update-gha": "pin-github-action .github/workflows"
+		"update-gha": "pin-github-action .github/workflows",
+		"format": "prettier --write ."
 	},
 	"dependencies": {
 		"magic-string": "^0.30.17",
@@ -34,6 +35,7 @@
 		"@types/xml2js": "^0.4.14",
 		"esbuild": "^0.25.8",
 		"pin-github-action": "^3.4.0",
+		"prettier": "^3.8.1",
 		"rollup": "2.75.6",
 		"typescript": "^5.8.3",
 		"vite": "3.0.0"
