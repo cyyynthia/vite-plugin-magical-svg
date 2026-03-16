@@ -30,11 +30,11 @@ import { createHash } from 'node:crypto'
 import { parseStringPromise as parseXml } from 'xml2js'
 import { generateDev, generateProd, inlineSymbol, type SupportedTarget } from './codegen.js'
 
-export function generateId(str: string) {
+export function generateId (str: string) {
 	return '_' + createHash('sha256').update(str).digest('hex').slice(0, 8)
 }
 
-export function traverseSvg(xml: any, handler: (tag: string, xml: any) => Promise<void> | void): Promise<any> {
+export function traverseSvg (xml: any, handler: (tag: string, xml: any) => Promise<void> | void): Promise<any> {
 	if (typeof xml !== 'object') return Promise.resolve()
 	const promises = []
 
@@ -53,7 +53,7 @@ export function traverseSvg(xml: any, handler: (tag: string, xml: any) => Promis
 	return Promise.all(promises)
 }
 
-export function transformRefs(xml: any, fn: (ref: string, isFile: boolean) => Promise<string | null>) {
+export function transformRefs (xml: any, fn: (ref: string, isFile: boolean) => Promise<string | null>) {
 	return traverseSvg(xml, async (tag, element) => {
 		if ((tag === 'image' || tag === 'use') && element.$?.href) {
 			const ref = await fn(element.$.href, tag === 'image')
@@ -62,7 +62,7 @@ export function transformRefs(xml: any, fn: (ref: string, isFile: boolean) => Pr
 	})
 }
 
-export function hashSymbols(xml: any) {
+export function hashSymbols (xml: any) {
 	return traverseSvg(xml, (tag, element) => {
 		if (tag === 'use' && element.$?.href) {
 			element.$.href = `#${generateId(element.$.href)}`
@@ -70,7 +70,7 @@ export function hashSymbols(xml: any) {
 	})
 }
 
-export function setFillStrokeColor(value: true | string, xml: any) {
+export function setFillStrokeColor (value: true | string, xml: any) {
 	const color = value === true ? 'currentColor' : value
 	return traverseSvg(xml, (_, element) => {
 		if (!element.$) return
@@ -86,7 +86,7 @@ export type SymbolIdGenerator = (file: string, raw: string) => string | null | v
  * Parse raw SVG content into an xml2js object and assign a symbol ID.
  * This is the pure parsing step -- no file I/O, no Vite plugin context needed.
  */
-export async function parseSvg(
+export async function parseSvg (
 	raw: string,
 	file: string,
 	symbolIdGen?: SymbolIdGenerator
@@ -117,7 +117,7 @@ export type SvgTransformConfig = {
  * width/height manipulation). Mutates the xml2js object in place and returns
  * viewBox metadata.
  */
-export async function transformSvg(
+export async function transformSvg (
 	xml: any,
 	config: SvgTransformConfig
 ): Promise<{ viewBox: string; width: string; height: string }> {
@@ -159,7 +159,7 @@ export type CodegenMode =
  * Generate the JavaScript module code for an SVG import.
  * This is the pure codegen step extracted from the transform hook.
  */
-export function generateModuleCode(
+export function generateModuleCode (
 	mode: CodegenMode,
 	target: SupportedTarget,
 	preamble: string,
@@ -172,7 +172,7 @@ export function generateModuleCode(
 			return preamble
 
 		case 'dev': {
-			return [preamble, generateDev(target, mode.xml)].join('\n')
+			return [ preamble, generateDev(target, mode.xml) ].join('\n')
 		}
 
 		case 'dev-inline': {
