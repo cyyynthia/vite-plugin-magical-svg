@@ -8,7 +8,6 @@ import {
 	transformSvg,
 	setFillStrokeColor,
 	hashSymbols,
-	generateModuleCode
 } from '../src/transform.js'
 
 const FIXTURES = resolve(import.meta.dirname, 'fixtures')

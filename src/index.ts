@@ -47,8 +47,12 @@ import {
 	transformRefs,
 	hashSymbols,
 	transformSvg,
-	generateModuleCode,
-	type SymbolIdGenerator
+	generateFileCode,
+	generateDevCode,
+	generateDevInlineCode,
+	generateProdInlineCode,
+	generateProdSpriteCode,
+	type SymbolIdGenerator,
 } from './transform.js'
 
 type SvgAsset = { sources: string[]; xml: any }
@@ -274,11 +278,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				const file = code.slice(exportIndex + 16, -1)
 				files.set(assetId, file.slice(1))
 				return {
-					code: generateModuleCode({ type: 'file' }, config.target ?? 'dom', code, {
-						viewBox: '',
-						width: '',
-						height: ''
-					}),
+					code: generateFileCode(code),
 					map: { mappings: '' }
 				}
 			}
@@ -291,13 +291,13 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 				if (assetId === 'inline') {
 					return {
-						code: generateModuleCode({ type: 'dev-inline', xml: asset.xml }, target, preamble, viewBoxes.get(id)!),
+						code: generateDevInlineCode(target, preamble, asset.xml),
 						map: { mappings: '' }
 					}
 				}
 
 				return {
-					code: generateModuleCode({ type: 'dev', xml: asset.xml }, target, preamble, viewBoxes.get(id)!),
+					code: generateDevCode(target, preamble, asset.xml),
 					map: { mappings: '' }
 				}
 			}
@@ -305,7 +305,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 			const symbolId = symbolIds.get(id)!
 			if (assetId === 'inline') {
 				return {
-					code: generateModuleCode({ type: 'prod-inline', symbolId }, target, preamble, viewBoxes.get(id)!),
+					code: generateProdInlineCode(target, preamble, viewBoxes.get(id)!, symbolId),
 					map: { mappings: '' }
 				}
 			}
@@ -315,7 +315,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 			files.set(assetId, generateFilename(fileName, `${assetId}.svg`, asset.sources.sort().join('')))
 
 			return {
-				code: generateModuleCode({ type: 'prod-sprite', symbolId }, target, preamble, viewBoxes.get(id)!),
+				code: generateProdSpriteCode(target, preamble, viewBoxes.get(id)!, symbolId),
 				map: { mappings: '' }
 			}
 		},
@@ -408,7 +408,11 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 						if (e instanceof Error && e.name === 'SvgoParserError') {
 							// @ts-expect-error -- SvgoParserError is not exported by svgo :pensive:
 							const { message, line, column } = e
-							this.error(`${message} (at line ${line}, column ${column})`)
+							this.error({ 
+								message, 
+								cause: e, 
+								loc: { line, column }
+							})
 						} else {
 							throw e
 						}

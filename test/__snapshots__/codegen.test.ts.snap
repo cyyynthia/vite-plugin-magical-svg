@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`generateModuleCode > dev mode > generates dev code for dom target 1`] = `
+exports[`generateDevCode > generates dev code for dom target 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/dom.js';
@@ -13,7 +13,7 @@ exports[`generateModuleCode > dev mode > generates dev code for dom target 1`] =
 	"
 `;
 
-exports[`generateModuleCode > dev mode > generates dev code for preact target 1`] = `
+exports[`generateDevCode > generates dev code for preact target 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/preact.js';
@@ -26,7 +26,7 @@ exports[`generateModuleCode > dev mode > generates dev code for preact target 1`
 	"
 `;
 
-exports[`generateModuleCode > dev mode > generates dev code for preact-jsx target 1`] = `
+exports[`generateDevCode > generates dev code for preact-jsx target 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/preact-jsx.js';
@@ -39,7 +39,7 @@ exports[`generateModuleCode > dev mode > generates dev code for preact-jsx targe
 	"
 `;
 
-exports[`generateModuleCode > dev mode > generates dev code for react target 1`] = `
+exports[`generateDevCode > generates dev code for react target 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react.js';
@@ -52,7 +52,7 @@ exports[`generateModuleCode > dev mode > generates dev code for react target 1`]
 	"
 `;
 
-exports[`generateModuleCode > dev mode > generates dev code for react-jsx target 1`] = `
+exports[`generateDevCode > generates dev code for react-jsx target 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react-jsx.js';
@@ -65,7 +65,7 @@ exports[`generateModuleCode > dev mode > generates dev code for react-jsx target
 	"
 `;
 
-exports[`generateModuleCode > dev mode > generates dev code for react19 target 1`] = `
+exports[`generateDevCode > generates dev code for react19 target 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react19.js';
@@ -78,7 +78,7 @@ exports[`generateModuleCode > dev mode > generates dev code for react19 target 1
 	"
 `;
 
-exports[`generateModuleCode > dev mode > generates dev code for react19-jsx target 1`] = `
+exports[`generateDevCode > generates dev code for react19-jsx target 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react19-jsx.js';
@@ -91,7 +91,7 @@ exports[`generateModuleCode > dev mode > generates dev code for react19-jsx targ
 	"
 `;
 
-exports[`generateModuleCode > dev mode > generates dev code for solid target 1`] = `
+exports[`generateDevCode > generates dev code for solid target 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/solid.js';
@@ -104,7 +104,7 @@ exports[`generateModuleCode > dev mode > generates dev code for solid target 1`]
 	"
 `;
 
-exports[`generateModuleCode > dev mode > generates dev code for vue target 1`] = `
+exports[`generateDevCode > generates dev code for vue target 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/vue.js';
@@ -117,7 +117,7 @@ exports[`generateModuleCode > dev mode > generates dev code for vue target 1`] =
 	"
 `;
 
-exports[`generateModuleCode > dev mode > generates dev code for vue-vapor target 1`] = `
+exports[`generateDevCode > generates dev code for vue-vapor target 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/vue-vapor.js';
@@ -130,7 +130,7 @@ exports[`generateModuleCode > dev mode > generates dev code for vue-vapor target
 	"
 `;
 
-exports[`generateModuleCode > dev-inline mode > generates dev-inline code with inlineSymbol 1`] = `
+exports[`generateDevInlineCode > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom.js';
@@ -153,12 +153,12 @@ exports[`generateModuleCode > dev-inline mode > generates dev-inline code with i
 	"
 `;
 
-exports[`generateModuleCode > file mode > passes through the original code 1`] = `
+exports[`generateFileCode > passes through the original code 1`] = `
 "import "./dep.svg";
 export default "/assets/icon.abc12345.svg""
 `;
 
-exports[`generateModuleCode > prod-inline mode > generates prod-inline code with symbol reference 1`] = `
+exports[`generateProdInlineCode > generates prod-inline code with symbol reference 1`] = `
 "import "./dep.svg";
 
 
@@ -172,7 +172,7 @@ exports[`generateModuleCode > prod-inline mode > generates prod-inline code with
 	"
 `;
 
-exports[`generateModuleCode > prod-sprite mode > generates prod-sprite code with placeholder 1`] = `
+exports[`generateProdSpriteCode > generates prod-sprite code with placeholder 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom.js';
@@ -185,7 +185,7 @@ exports[`generateModuleCode > prod-sprite mode > generates prod-sprite code with
 	"
 `;
 
-exports[`generateModuleCode > prod-sprite mode > includes preamble imports 1`] = `
+exports[`generateProdSpriteCode > includes preamble imports 1`] = `
 "import "/path/to/dep.svg";
 
 
@@ -199,7 +199,7 @@ exports[`generateModuleCode > prod-sprite mode > includes preamble imports 1`] =
 	"
 `;
 
-exports[`generateModuleCode > with viewBox and dimensions > passes viewBox, width, and height to codegen 1`] = `
+exports[`generateProdSpriteCode > passes viewBox, width, and height to codegen 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/vue.js';

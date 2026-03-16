@@ -148,55 +148,62 @@ export async function transformSvg (
 	}
 }
 
-export type CodegenMode =
-	| { type: 'file' }
-	| { type: 'dev'; xml: any }
-	| { type: 'dev-inline'; xml: any }
-	| { type: 'prod-inline'; symbolId: string }
-	| { type: 'prod-sprite'; symbolId: string }
+/**
+ * Generate module code for file mode: keeps the original export default (URL string).
+ * The caller should pass the full code as `code`.
+ */
+export function generateFileCode (code: string): string {
+	return code
+}
 
 /**
- * Generate the JavaScript module code for an SVG import.
- * This is the pure codegen step extracted from the transform hook.
+ * Generate module code for dev mode: uses createSvgDEV with inline SVG content.
  */
-export function generateModuleCode (
-	mode: CodegenMode,
+export function generateDevCode (target: SupportedTarget, preamble: string, xml: any): string {
+	return [ preamble, generateDev(target, xml) ].join('\n')
+}
+
+/**
+ * Generate module code for dev-inline mode: hashes the symbol ID, emits a
+ * createSvg call with a fragment reference, and appends the inline symbol IIFE.
+ */
+export function generateDevInlineCode (target: SupportedTarget, preamble: string, xml: any): string {
+	xml.svg.$.id = generateId(xml.svg.$.id)
+	return [
+		preamble,
+		generateProd(target, xml.svg.$.viewBox, xml.svg.$.width, xml.svg.$.height, `'#${xml.svg.$.id}'`),
+		inlineSymbol(xml),
+	].join('\n')
+}
+
+/**
+ * Generate module code for prod-inline mode: emits a createSvg call with a
+ * fragment reference to a symbol that will be inlined in the HTML.
+ */
+export function generateProdInlineCode (
 	target: SupportedTarget,
 	preamble: string,
-	viewBox: { viewBox: string; width: string; height: string }
+	viewBox: { viewBox: string; width: string; height: string },
+	symbolId: string,
 ): string {
-	switch (mode.type) {
-		case 'file':
-			// file mode: keep the original export default (URL string)
-			// caller should pass the full code as preamble
-			return preamble
+	return [
+		preamble,
+		generateProd(target, viewBox.viewBox, viewBox.width, viewBox.height, `'#${symbolId}'`),
+	].join('\n')
+}
 
-		case 'dev': {
-			return [ preamble, generateDev(target, mode.xml) ].join('\n')
-		}
-
-		case 'dev-inline': {
-			const xml = mode.xml
-			xml.svg.$.id = generateId(xml.svg.$.id)
-			return [
-				preamble,
-				generateProd(target, xml.svg.$.viewBox, xml.svg.$.width, xml.svg.$.height, `'#${xml.svg.$.id}'`),
-				inlineSymbol(xml)
-			].join('\n')
-		}
-
-		case 'prod-inline': {
-			return [
-				preamble,
-				generateProd(target, viewBox.viewBox, viewBox.width, viewBox.height, `'#${mode.symbolId}'`)
-			].join('\n')
-		}
-
-		case 'prod-sprite': {
-			return [
-				preamble,
-				generateProd(target, viewBox.viewBox, viewBox.width, viewBox.height, `__MAGICAL_SVG_SPRITE__${mode.symbolId}__`)
-			].join('\n')
-		}
-	}
+/**
+ * Generate module code for prod-sprite mode: emits a createSvg call with a
+ * placeholder that will be replaced with the sprite URL during renderChunk.
+ */
+export function generateProdSpriteCode (
+	target: SupportedTarget,
+	preamble: string,
+	viewBox: { viewBox: string; width: string; height: string },
+	symbolId: string,
+): string {
+	return [
+		preamble,
+		generateProd(target, viewBox.viewBox, viewBox.width, viewBox.height, `__MAGICAL_SVG_SPRITE__${symbolId}__`),
+	].join('\n')
 }
