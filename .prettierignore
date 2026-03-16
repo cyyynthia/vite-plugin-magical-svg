@@ -1,1 +1,2 @@
+# The project does not use Prettier; disable it globally to avoid automatic formatting by editors configured that way
 **/*
