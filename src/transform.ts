@@ -109,6 +109,7 @@ export type SvgTransformConfig = {
 	setFillStrokeColor?: boolean | string | undefined
 	preserveWidthHeight?: boolean | undefined
 	setWidthHeight?: { width: string; height: string } | undefined
+	skipRecolor?: boolean | undefined
 }
 
 /**
@@ -126,7 +127,7 @@ export async function transformSvg(
 	}
 
 	// Transform fill and stroke if configured
-	if (config.setFillStrokeColor) {
+	if (config.setFillStrokeColor && !config.skipRecolor) {
 		await setFillStrokeColor(config.setFillStrokeColor, xml)
 	}
 

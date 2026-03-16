@@ -70,7 +70,7 @@ export type MagicalSvgConfig = {
 let ROOT = '/'
 const ASSET_RE = /__MAGICAL_SVG_SPRITE__(_[0-9a-f]{8})__/g
 
-async function load(
+async function load (
 	ctx: PluginContext,
 	file: string,
 	serve: boolean,
@@ -100,7 +100,7 @@ async function load(
 		ctx.warn(`${fileFriendlyName} is an empty SVG.`)
 	}
 
-	await transformRefs(xml.svg, async (ref, isFile) => {
+	await transformRefs (xml.svg, async (ref, isFile) => {
 		const resolved = await ctx.resolve(ref, file)
 		if (!resolved?.id) return null
 
@@ -214,9 +214,10 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 			const viewboxInfo = await transformSvg(xml, {
 				restoreMissingViewBox: config.restoreMissingViewBox,
-				setFillStrokeColor: url.searchParams.has('skip-recolor') ? false : config.setFillStrokeColor,
+				setFillStrokeColor: config.setFillStrokeColor,
 				preserveWidthHeight: config.preserveWidthHeight,
-				setWidthHeight: config.setWidthHeight
+				setWidthHeight: config.setWidthHeight,
+				skipRecolor: url.searchParams.has('skip-recolor')
 			})
 
 			viewBoxes.set(id, viewboxInfo)
