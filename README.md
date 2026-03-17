@@ -94,6 +94,7 @@ export default defineConfig({
 - `vue`: exports a Vue component (as if it was a `.vue` file)
 - `vue-vapor`: exports a Vue Vapor[^vapor] component (as if it was a `.vue` file)
 - `solid`: exports a Solid component
+- `ember`: exports an Ember component
 
 [^vapor]: Vue's high-performance subset introduced in Vue 3.6
 
