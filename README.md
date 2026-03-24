@@ -83,6 +83,69 @@ export default defineConfig({
 })
 ```
 
+#### SVGO configuration
+By default, SVGs are optimized with [SVGO](https://github.com/svg/svgo) during production builds. You can disable
+optimization entirely by setting `svgo` to `false`, or pass a custom SVGO config object to customize the behavior.
+
+When a config object is provided, it is **deep-merged** with the plugin's default config:
+- Top-level options (`multipass`, `floatPrecision`, `js2svg`, `datauri`) override defaults.
+- Plugins are merged by name: if you provide a plugin with the same name as a default one, your version replaces it.
+  New plugins are appended after the defaults.
+- `preset-default` is special-cased: its `overrides` are merged so you can selectively override individual plugin
+  settings without losing the other defaults.
+
+The plugin's default SVGO config is:
+```js
+{
+	plugins: [
+		{
+			name: 'preset-default',
+			params: {
+				overrides: {
+					cleanupNumericValues: false,
+					removeHiddenElems: false,
+					removeUselessDefs: false, // for file assets; default for sprites
+					cleanupIds: { minify: false, remove: false },
+					convertPathData: false,
+				},
+			},
+		},
+		'removeTitle',
+		'inlineStyles',
+	],
+}
+```
+
+Example: enable multipass and re-enable `convertPathData` with custom params:
+```js
+magicalSvg({
+	svgo: {
+		multipass: true,
+		plugins: [
+			{
+				name: 'preset-default',
+				params: {
+					overrides: {
+						convertPathData: { floatPrecision: 3 },
+					},
+				},
+			},
+		],
+	},
+})
+```
+
+Example: add a plugin that isn't in the defaults:
+```js
+magicalSvg({
+	svgo: {
+		plugins: [
+			'removeDimensions',
+		],
+	},
+})
+```
+
 #### Targets
 - `dom` (default): exports a function you can call (takes no arguments) and returns a DOM element.
 - `react19`: exports a functional React component (classic runtime)

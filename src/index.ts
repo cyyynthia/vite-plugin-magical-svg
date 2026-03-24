@@ -28,7 +28,7 @@
 
 import type { Plugin, FilterPattern } from 'vite'
 import type { PluginContext, OutputOptions } from 'rollup'
-import type { Config } from 'svgo'
+import type { Config, PluginConfig } from 'svgo'
 
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
@@ -49,7 +49,7 @@ export type MagicalSvgConfig = {
 	exclude?: FilterPattern | undefined
 	target?: SupportedTarget,
 	symbolId?: SymbolIdGenerator,
-	svgo?: boolean,
+	svgo?: boolean | Config,
 
 	preserveWidthHeight?: boolean
 	setWidthHeight?: { width: string, height: string }
@@ -156,6 +156,68 @@ async function load (ctx: PluginContext, file: string, serve: boolean, symbolIdG
 	xml.svg.$.id = symbolIdGen?.(file, raw) || generateId(raw);
 
 	return [ raw, xml, imports ]
+}
+
+function getPluginName (plugin: PluginConfig): string {
+	return typeof plugin === 'string' ? plugin : plugin.name
+}
+
+function mergeSvgoConfigs (defaults: Config, overrides: Config): Config {
+	const merged: Config = { ...defaults }
+
+	// Shallow-merge top-level options
+	if (overrides.path !== undefined) merged.path = overrides.path
+	if (overrides.multipass !== undefined) merged.multipass = overrides.multipass
+	if (overrides.floatPrecision !== undefined) merged.floatPrecision = overrides.floatPrecision
+	if (overrides.js2svg !== undefined) merged.js2svg = { ...defaults.js2svg, ...overrides.js2svg }
+	if (overrides.datauri !== undefined) merged.datauri = overrides.datauri
+
+	// Merge plugins by name
+	if (overrides.plugins) {
+		const defaultPlugins = [...(defaults.plugins ?? [])]
+		const result: PluginConfig[] = []
+
+		for (const defaultPlugin of defaultPlugins) {
+			const defaultName = getPluginName(defaultPlugin)
+			const override = overrides.plugins.find((p) => getPluginName(p) === defaultName)
+
+			if (!override) {
+				// No override for this default plugin, keep as-is
+				result.push(defaultPlugin)
+			} else if (defaultName === 'preset-default' && typeof defaultPlugin !== 'string' && typeof override !== 'string') {
+				// Deep-merge preset-default overrides
+				const defaultParams = (defaultPlugin as any).params ?? {}
+				const overrideParams = (override as any).params ?? {}
+
+				result.push({
+					name: 'preset-default',
+					params: {
+						...defaultParams,
+						...overrideParams,
+						overrides: {
+							...defaultParams.overrides,
+							...overrideParams.overrides,
+						},
+					},
+				})
+			} else {
+				// Replace default plugin with user's version
+				result.push(override)
+			}
+		}
+
+		// Append any user plugins that don't exist in defaults
+		for (const userPlugin of overrides.plugins) {
+			const userName = getPluginName(userPlugin)
+			if (!defaultPlugins.some((p) => getPluginName(p) === userName)) {
+				result.push(userPlugin)
+			}
+		}
+
+		merged.plugins = result
+	}
+
+	return merged
 }
 
 function generateFilename (template: AssetName, file: string, raw: string) {
@@ -458,7 +520,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				const builder = new Builder()
 				let xml = builder.buildObject(asset.xml)
 				if (config.svgo !== false) {
-					const opts: Config = {
+					const defaultOpts: Config = {
 						plugins: [
 							{
 								name: 'preset-default',
@@ -476,8 +538,13 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 								},
 							},
 							'removeTitle',
+							'inlineStyles'
 						],
 					}
+
+					const opts = typeof config.svgo === 'object'
+						? mergeSvgoConfigs(defaultOpts, config.svgo)
+						: defaultOpts
 
 					try {
 						const res = svgoOptimize(xml, opts)
