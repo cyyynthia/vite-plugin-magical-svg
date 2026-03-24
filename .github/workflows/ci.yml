@@ -1,0 +1,75 @@
+name: CI — Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-tests
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18, 20, 22, 24]
+        vite: [3, 4, 5, 6, 7, 8]
+
+    steps:
+      - name: Checkout repository (safe for forks)
+        # pinned to tag: v6.0.2 -> sha: de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          # Do not persist credentials so workflows from forked PRs cannot use the token
+          persist-credentials: false
+
+      - name: Use Node and cache pnpm
+        # pinned to tag: v6.3.0 -> sha: 53b83947a5a98c8d113130e565377fae1a50d02f
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
+      - name: Cache pnpm store
+        # pinned to tag: v5.0.4 -> sha: 668228422ae6a00e4ad889ee87cd7109ec5666a7
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ matrix.node }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-${{ matrix.node }}-
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Override Vite version for matrix
+        # install the matrix's vite into node_modules without changing package.json
+        run: pnpm add -D "vite@${{ matrix.vite }}" --no-save
+
+      - name: Run tests
+        env:
+          TEST_VITE: ${{ matrix.vite }}
+          TEST_NODE: ${{ matrix.node }}
+        run: pnpm test
+
+      - name: Upload logs on failure
+        if: failure()
+        # pinned to tag: v7.0.0 -> sha: bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+        with:
+          name: ci-logs-node${{ matrix.node }}-vite${{ matrix.vite }}
+          path: |
+            pnpm-debug.log
+            ./**/test-results/**/*.log
