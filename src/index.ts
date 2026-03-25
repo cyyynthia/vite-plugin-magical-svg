@@ -181,10 +181,7 @@ function mergeSvgoConfigs (defaults: Config, overrides: Config): Config {
 			const defaultName = getPluginName(defaultPlugin)
 			const override = overrides.plugins.find((p) => getPluginName(p) === defaultName)
 
-			if (!override) {
-				// No override for this default plugin, keep as-is
-				result.push(defaultPlugin)
-			} else if (defaultName === 'preset-default' && typeof defaultPlugin !== 'string' && typeof override !== 'string') {
+			if (override && defaultName === 'preset-default' && typeof defaultPlugin !== 'string' && typeof override !== 'string') {
 				// Deep-merge preset-default overrides
 				const defaultParams = (defaultPlugin as any).params ?? {}
 				const overrideParams = (override as any).params ?? {}
@@ -202,7 +199,7 @@ function mergeSvgoConfigs (defaults: Config, overrides: Config): Config {
 				})
 			} else {
 				// Replace default plugin with user's version
-				result.push(override)
+				result.push(override ?? defaultPlugin)
 			}
 		}
 
