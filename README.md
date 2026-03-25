@@ -57,7 +57,9 @@ export default defineConfig({
 			// You can also change the output to react (or any supported target) to get a component you can use.
 			target: 'preact',
 
-			// By default, the svgs are optimized with svgo. You can disable this by setting this to false.
+			// By default, the svgs are optimized with svgo. You can disable this by setting this to false or you 
+			// can provide your own SVGO config object to customize the behavior. See the SVGO configuration
+			// section below for more details.
 			svgo: false,
 
 			// By default, width and height set on SVGs are not preserved.
@@ -86,6 +88,9 @@ export default defineConfig({
 #### SVGO configuration
 By default, SVGs are optimized with [SVGO](https://github.com/svg/svgo) during production builds. You can disable
 optimization entirely by setting `svgo` to `false`, or pass a custom SVGO config object to customize the behavior.
+
+> [!NOTE]  
+> There are SVGO configurations that can break sprites. Ensure your custom configuration builds your production sprites correctly.
 
 When a config object is provided, it is **deep-merged** with the plugin's default config:
 - Top-level options (`multipass`, `floatPrecision`, `js2svg`, `datauri`) override defaults.
