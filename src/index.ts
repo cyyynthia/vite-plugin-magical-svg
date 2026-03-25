@@ -174,7 +174,7 @@ function mergeSvgoConfigs (defaults: Config, overrides: Config): Config {
 
 	// Merge plugins by name
 	if (overrides.plugins) {
-		const defaultPlugins = [...(defaults.plugins ?? [])]
+		const defaultPlugins = defaults.plugins ?? [];
 		const result: PluginConfig[] = []
 
 		for (const defaultPlugin of defaultPlugins) {
