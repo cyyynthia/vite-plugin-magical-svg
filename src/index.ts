@@ -534,8 +534,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 									},
 								},
 							},
-							'removeTitle',
-							'inlineStyles'
+							'removeTitle'
 						],
 					}
 
