@@ -46,7 +46,7 @@ jobs:
 
       - name: Override Vite version for matrix
         # install the matrix's vite into node_modules without changing package.json
-        run: pnpm add -D "vite@${{ matrix.vite }}" --no-save
+        run: pnpm add -D "vite@${{ matrix.vite }}"
 
       - name: Run tests
         env:
