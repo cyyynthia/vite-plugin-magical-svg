@@ -30,26 +30,16 @@ jobs:
           # Do not persist credentials so workflows from forked PRs cannot use the token
           persist-credentials: false
 
+      - name: Install pnpm
+        # pinned to tag: v4.1.0 -> sha: fc06bc1257f339d1d5d8b3a19a8cae5388b55320
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
+
       - name: Use Node and cache pnpm
         # pinned to tag: v6.3.0 -> sha: 53b83947a5a98c8d113130e565377fae1a50d02f
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
         with:
           node-version: ${{ matrix.node }}
-          cache: 'pnpm'
-          cache-dependency-path: pnpm-lock.yaml
-
-      - name: Enable Corepack (pnpm)
-        run: corepack enable
-
-      - name: Cache pnpm store
-        # pinned to tag: v5.0.4 -> sha: 668228422ae6a00e4ad889ee87cd7109ec5666a7
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ matrix.node }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-${{ matrix.node }}-
-            ${{ runner.os }}-pnpm-
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
