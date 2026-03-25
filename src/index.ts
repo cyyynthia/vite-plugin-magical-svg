@@ -183,8 +183,8 @@ function mergeSvgoConfigs (defaults: Config, overrides: Config): Config {
 
 			if (override && defaultName === 'preset-default' && typeof defaultPlugin !== 'string' && typeof override !== 'string') {
 				// Deep-merge preset-default overrides
-				const defaultParams = (defaultPlugin as any).params ?? {}
-				const overrideParams = (override as any).params ?? {}
+				const defaultParams = defaultPlugin.params ?? {}
+				const overrideParams = override.params ?? {}
 
 				result.push({
 					name: 'preset-default',
