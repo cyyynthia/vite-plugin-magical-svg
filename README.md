@@ -89,9 +89,9 @@ optimization entirely by setting `svgo` to `false`, or pass a custom SVGO config
 
 When a config object is provided, it is **deep-merged** with the plugin's default config:
 - Top-level options (`multipass`, `floatPrecision`, `js2svg`, `datauri`) override defaults.
-- Plugins are merged by name: if you provide a plugin with the same name as a default one, your version replaces it.
-  New plugins are appended after the defaults.
-- `preset-default` is special-cased: its `overrides` are merged so you can selectively override individual plugin
+- New plugins are always added after the defaults.
+- Configuring a plugin that is already included in the defaults, it is always replaced without merging the configurations, but kept in the original order.
+- `preset-default` is a special case: its `params` and `overrides` are shallowly merged so you can selectively override individual plugin
   settings without losing the other defaults.
 
 The plugin's default SVGO config is:
