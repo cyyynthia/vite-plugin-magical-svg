@@ -27,7 +27,8 @@
  */
 
 import type { Plugin, FilterPattern } from 'vite'
-import type { PluginContext, OutputOptions } from 'rollup'
+import type { PluginContext as RollupPluginContext, OutputOptions as RollupOutputOptions } from 'rollup'
+import type { PluginContext as RolldownPluginContext, OutputOptions as RolldownOutputOptions } from 'rolldown'
 import type { Config } from 'svgo'
 
 import { createHash } from 'node:crypto'
@@ -55,8 +56,11 @@ import {
 	type SymbolIdGenerator,
 } from './transform.js'
 
+type PluginContext = RollupPluginContext | RolldownPluginContext
+
 type SvgAsset = { sources: string[]; xml: any }
-type AssetName = NonNullable<OutputOptions['assetFileNames']>
+type AssetName = NonNullable<RollupOutputOptions['assetFileNames'] | RolldownOutputOptions['assetFileNames']>
+type PreRenderedAsset = Parameters<Exclude<AssetName, string>>[0]
 
 export type MagicalSvgConfig = {
 	include?: FilterPattern | undefined
@@ -144,8 +148,8 @@ function generateFilename (template: AssetName, file: string, raw: string) {
 		source: raw,
 		name: file,
 		names: [file],
-		originalFileName: null,
-		originalFileNames: []
+		originalFileName: null!, // Rolldown is a fine piece of software (no)
+		originalFileNames: [],
 	})
 }
 
@@ -172,17 +176,21 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 	return {
 		name: 'vite-plugin-magical-svg',
 		enforce: 'pre',
-		configResolved (cfg) {
+		configResolved(cfg) {
+			const bundlerOptions = this.meta.rolldownVersion
+				? cfg.build.rolldownOptions
+				: cfg.build.rollupOptions
+
 			ROOT = cfg.root ?? ROOT
 			base = cfg.base ?? base
 			sourcemap = !!cfg.build.sourcemap
-			treeshake = cfg.build.rollupOptions.treeshake !== false
+			treeshake = bundlerOptions.treeshake !== false
 
-			const { output } = cfg.build.rollupOptions
+			const { output } = bundlerOptions
 
 			if (cfg.command === 'serve') {
 				serve = true
-				fileName = (info) => relative(cfg.root, info.name!)
+				fileName = (info: PreRenderedAsset) => relative(cfg.root, info.names[0]!)
 			} else if (output && !Array.isArray(output) && output.assetFileNames) {
 				fileName = output.assetFileNames
 			}
@@ -201,122 +209,137 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 			return
 		},
-		resolveId (id, importer) {
-			if (!importer || !id.endsWith('.svg') || id.startsWith('.') || id.startsWith('/')) return
-			if (!filter(id)) return
+		resolveId: {
+			filter: {
+				id: /^[^./].*\.svg$/
+			},
+			handler(id, importer) {
+				if (!importer || !id.endsWith('.svg') || id.startsWith('.') || id.startsWith('/')) return
+				if (!filter(id)) return
 
-			// I'm implementing my own naive resolve as I need to *avoid* `exports` compliance
-			// which is something Vite's resolver won't let me do it seems :<
-			return resolve(id, importer)
+				// I'm implementing my own naive resolve as I need to *avoid* `exports` compliance
+				// which is something Vite's resolver won't let me do it seems :<
+				return resolve(id, importer)
+			}
 		},
-		async load (id) {
-			const url = new URL(`file:///${id}`)
-			if (!filter(id) || !url.pathname.endsWith('.svg')) return null
+		load: {
+			filter: {
+				id: /\.svg(?:\?.*)?$/
+			},
+			async handler (id) {
+				const url = new URL(`file:///${id}`)
+				if (!filter(id) || !url.pathname.endsWith('.svg')) return null
 
-			const filePath = fileURLToPath(url)
-			const [ raw, xml, imports ] = await load(this, filePath, serve, config.symbolId)
+				const filePath = fileURLToPath(url)
+				const [ raw, xml, imports ] = await load(this, filePath, serve, config.symbolId)
 
-			const viewboxInfo = await transformSvg(xml, {
-				restoreMissingViewBox: config.restoreMissingViewBox,
-				setFillStrokeColor: config.setFillStrokeColor,
-				preserveWidthHeight: config.preserveWidthHeight,
-				setWidthHeight: config.setWidthHeight,
-				skipRecolor: url.searchParams.has('skip-recolor')
-			})
+				const viewboxInfo = await transformSvg(xml, {
+					restoreMissingViewBox: config.restoreMissingViewBox,
+					setFillStrokeColor: config.setFillStrokeColor,
+					preserveWidthHeight: config.preserveWidthHeight,
+					setWidthHeight: config.setWidthHeight,
+					skipRecolor: url.searchParams.has('skip-recolor')
+				})
 
-			viewBoxes.set(id, viewboxInfo)
+				viewBoxes.set(id, viewboxInfo)
 
-			if (url.searchParams.has('file') || serve) {
-				assets.set(id, { sources: [], xml: xml })
-				usedAssets.set(id, new Set())
-			} else {
-				const spriteId = url.searchParams.get('sprite') ?? 'sprite'
-				const sprite = assets.get(spriteId) ?? {
-					sources: [],
-					xml: {
-						svg: {
-							$: { width: 0, height: 0 },
-							symbol: []
+				if (url.searchParams.has('file') || serve) {
+					assets.set(id, { sources: [], xml: xml })
+					usedAssets.set(id, new Set())
+				} else {
+					const spriteId = url.searchParams.get('sprite') ?? 'sprite'
+					const sprite = assets.get(spriteId) ?? {
+						sources: [],
+						xml: {
+							svg: {
+								$: { width: 0, height: 0 },
+								symbol: []
+							}
 						}
 					}
-				}
 
-				if (!assets.has(spriteId)) {
-					assets.set(spriteId, sprite)
-					usedAssets.set(spriteId, new Set())
-				}
-
-				if (spriteId !== 'inline') {
-					// Clean (common) useless attributes
-					// Don't do this for the inline sprite as this would be a breaking change
-					// + it may be useful for JS code :shrug:
-					for (const attr of Object.keys(xml.svg.$)) {
-						if (attr === 'class' || attr.startsWith('aria-') || attr.startsWith('data-'))
-							delete xml.svg.$[attr]
+					if (!assets.has(spriteId)) {
+						assets.set(spriteId, sprite)
+						usedAssets.set(spriteId, new Set())
 					}
+
+					if (spriteId !== 'inline') {
+						// Clean (common) useless attributes
+						// Don't do this for the inline sprite as this would be a breaking change
+						// + it may be useful for JS code :shrug:
+						for (const attr of Object.keys(xml.svg.$)) {
+							if (attr === 'class' || attr.startsWith('aria-') || attr.startsWith('data-'))
+								delete xml.svg.$[attr]
+						}
+					}
+
+					sprite.xml.svg.symbol.push(xml.svg)
+					sprite.sources.push(raw)
+					symbolIds.set(id, xml.svg.$.id)
 				}
 
-				sprite.xml.svg.symbol.push(xml.svg)
-				sprite.sources.push(raw)
-				symbolIds.set(id, xml.svg.$.id)
-			}
-
-			const imp = imports.map((i) => `import ${JSON.stringify(i)};`).join('\n')
-			const file = generateFilename(fileName, filePath, raw)
-			return {
-				code: `${imp}\nexport default ${JSON.stringify(`/${file}`)}`,
-				moduleSideEffects: false,
+				const imp = imports.map((i) => `import ${JSON.stringify(i)};`).join('\n')
+				const file = generateFilename(fileName, filePath, raw)
+				return {
+					code: `${imp}\nexport default ${JSON.stringify(`/${file}`)}`,
+					moduleSideEffects: false,
+				}
 			}
 		},
-		async transform (code, id) {
-			const url = new URL(`file:///${id}`)
-			if (!filter(id) || !url.pathname.endsWith('.svg')) return null
-			const assetId = url.searchParams.has('file') ? id : url.searchParams.get('sprite') ?? 'sprite'
+		transform: {
+			filter: {
+				id: /\.svg(?:\?.*)?$/
+			},
+			async handler (code, id) {
+				const url = new URL(`file:///${id}`)
+				if (!filter(id) || !url.pathname.endsWith('.svg')) return null
+				const assetId = url.searchParams.has('file') ? id : url.searchParams.get('sprite') ?? 'sprite'
 
-			const exportIndex = code.indexOf('export default')
-			if (url.searchParams.has('file')) {
-				const file = code.slice(exportIndex + 16, -1)
-				files.set(assetId, file.slice(1))
-				return {
-					code: generateFileCode(code),
-					map: { mappings: '' }
-				}
-			}
-
-			const target = config.target ?? 'dom'
-			const preamble = code.slice(0, exportIndex)
-			if (serve) {
-				const asset = assets.get(id)!
-				await hashSymbols(asset.xml.svg)
-
-				if (assetId === 'inline') {
+				const exportIndex = code.indexOf('export default')
+				if (url.searchParams.has('file')) {
+					const file = code.slice(exportIndex + 16, -1)
+					files.set(assetId, file.slice(1))
 					return {
-						code: generateDevInlineCode(target, preamble, asset.xml),
+						code: generateFileCode(code),
 						map: { mappings: '' }
 					}
 				}
 
+				const target = config.target ?? 'dom'
+				const preamble = code.slice(0, exportIndex)
+				if (serve) {
+					const asset = assets.get(id)!
+					await hashSymbols(asset.xml.svg)
+
+					if (assetId === 'inline') {
+						return {
+							code: generateDevInlineCode(target, preamble, asset.xml),
+							map: { mappings: '' }
+						}
+					}
+
+					return {
+						code: generateDevCode(target, preamble, asset.xml),
+						map: { mappings: '' }
+					}
+				}
+
+				const symbolId = symbolIds.get(id)!
+				if (assetId === 'inline') {
+					return {
+						code: generateProdInlineCode(target, preamble, viewBoxes.get(id)!, symbolId),
+						map: { mappings: '' }
+					}
+				}
+
+				sprites.set(symbolId, assetId)
+				const asset = assets.get(assetId)!
+				files.set(assetId, generateFilename(fileName, `${assetId}.svg`, asset.sources.sort().join('')))
+
 				return {
-					code: generateDevCode(target, preamble, asset.xml),
+					code: generateProdSpriteCode(target, preamble, viewBoxes.get(id)!, symbolId),
 					map: { mappings: '' }
 				}
-			}
-
-			const symbolId = symbolIds.get(id)!
-			if (assetId === 'inline') {
-				return {
-					code: generateProdInlineCode(target, preamble, viewBoxes.get(id)!, symbolId),
-					map: { mappings: '' }
-				}
-			}
-
-			sprites.set(symbolId, assetId)
-			const asset = assets.get(assetId)!
-			files.set(assetId, generateFilename(fileName, `${assetId}.svg`, asset.sources.sort().join('')))
-
-			return {
-				code: generateProdSpriteCode(target, preamble, viewBoxes.get(id)!, symbolId),
-				map: { mappings: '' }
 			}
 		},
 		renderChunk (code) {
@@ -360,6 +383,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 					} else {
 						// This is a file. We can know if the file has been tree-shaken by checking `isIncluded`.
 						const mdl = this.getModuleInfo(assetId)
+						// @ts-expect-error -- TODO: Rolldown's garbage compat strikes again! :)
 						if (!mdl?.isIncluded) continue // Skip the file
 					}
 				}
@@ -408,9 +432,9 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 						if (e instanceof Error && e.name === 'SvgoParserError') {
 							// @ts-expect-error -- SvgoParserError is not exported by svgo :pensive:
 							const { message, line, column } = e
-							this.error({ 
-								message, 
-								cause: e, 
+							this.error({
+								message,
+								cause: e,
 								loc: { line, column }
 							})
 						} else {

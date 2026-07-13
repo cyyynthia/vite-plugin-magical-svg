@@ -39,6 +39,8 @@ function renderHtml (xml: any, useSymbol: boolean) {
 
 export type SupportedTarget =
 	| 'dom'
+	| 'dom-fn'
+	| 'dom-template'
 	| 'react19'
 	| 'react19-jsx'
 	| 'react'
@@ -48,6 +50,7 @@ export type SupportedTarget =
 	| 'vue'
 	| 'vue-vapor'
 	| 'solid'
+	| 'ember'
 
 export function generateDev (target: SupportedTarget, xml: any): string {
 	return `
