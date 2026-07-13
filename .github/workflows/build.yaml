@@ -58,4 +58,4 @@ jobs:
       - run: pnpm run test
         env:
           TEST_VITE: ${{ matrix.vite }}
-          TEST_NODE: ${{ matrix.node }}=
+          TEST_NODE: ${{ matrix.node }}
