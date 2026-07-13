@@ -34,16 +34,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        node: [20, 22, 24, 26] # Can't test earlier Node versions (Vitest requires modern Node versions)
-        vite: [3, 4, 5, 6, 7, 8]
-        include:
-          - os: windows-latest
-            node: 26
-            vite: 8
-          - os: macos-latest
-            node: 26
-            vite: 8
+        # Older Node versions and Vite versions aren't compatible with Vitest
+        # We'll need to test these via a more robust E2E harness
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [20, 22, 24, 26]
+        vite: [6, 7, 8]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
