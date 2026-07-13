@@ -1,13 +1,14 @@
 {
-	"extends": [
-		"@tsconfig/strictest/tsconfig.json",
-		"@tsconfig/node-lts/tsconfig.json"
-	],
+	"extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node-lts/tsconfig.json"],
 	"compilerOptions": {
+		"erasableSyntaxOnly": true,
+		"allowImportingTsExtensions": true,
+		"rewriteRelativeImportExtensions": true,
 		"declaration": true,
-		"isolatedModules": false,
-		"preserveConstEnums": false,
-		"outDir": "./dist"
+		"stripInternal": true,
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"types": ["node"],
 	},
-	"include": [ "src" ]
+	"include": ["src"],
 }
