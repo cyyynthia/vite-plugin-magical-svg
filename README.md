@@ -1,10 +1,10 @@
 # Magical SVG 🪄
 [![License](https://img.shields.io/github/license/cyyynthia/vite-plugin-magical-svg.svg?style=flat-square)](https://github.com/cyyynthia/vite-plugin-magical-svg/blob/mistress/LICENSE)
-[![npm](https://img.shields.io/npm/v/vite-plugin-magical-svg?style=flat-square)](https://npm.im/vite-plugin-magical-svg)
+[![npm](https://img.shields.io/npm/v/vite-plugin-magical-svg?style=flat-square)](https://npmx.dev/vite-plugin-magical-svg)
 
 [![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-support%20me-EA4AAA?style=flat-square)](https://github.com/sponsors/cyyynthia)
-[![Weekly downloads](https://img.shields.io/npm/dw/vite-plugin-magical-svg?style=flat-square)](https://npm.im/vite-plugin-magical-svg)
-[![Monthly downloads](https://img.shields.io/npm/dm/vite-plugin-magical-svg?style=flat-square)](https://npm.im/vite-plugin-magical-svg)
+[![Weekly downloads](https://img.shields.io/npm/dw/vite-plugin-magical-svg?style=flat-square)](https://npmx.dev/vite-plugin-magical-svg)
+[![Monthly downloads](https://img.shields.io/npm/dm/vite-plugin-magical-svg?style=flat-square)](https://npmx.dev/vite-plugin-magical-svg)
 
 An all-in-one [Vite](https://vitejs.dev/) plugin that magically makes working with SVGs and bundling them a breeze.
 
@@ -84,7 +84,9 @@ export default defineConfig({
 ```
 
 #### Targets
-- `dom` (default): exports a function you can call (takes no arguments) and returns a DOM element.
+- `dom` (default): exports a DOM element[^oopsie-dom]. Uses `document.createElementNS` under the hood.
+- `dom-fn`: exports a function you can call (takes no arguments) and returns a DOM element. Uses `document.createElementNS` under the hood.
+- `dom-template`: similar to `dom-fn`, but leverages `document.createElement('template').innerHTML`. More compact than `dom-fn`, but relies on `innerHTML`.
 - `react19`: exports a functional React component (classic runtime)
 - `react19-jsx`: exports a functional React component (automatic runtime)
 - `react`: exports a functional React component (classic runtime; wrapped in `forwardRef`)
@@ -96,7 +98,9 @@ export default defineConfig({
 - `solid`: exports a Solid component
 - `ember`: exports an Ember component
 
-[^vapor]: Vue's high-performance subset introduced in Vue 3.6
+[^vapor]: Vue's high-performance subset introduced in Vue 3.6.
+[^oopsie-dom]: This target was supposed to behave as `dom-fn` actually, but I messed up the implementation. To avoid
+breaking changes, `dom-fn` has been introduced with a more sensible behaviour. See [#26].
 
 ### Use in code
 ```js
@@ -133,3 +137,5 @@ plus the [preprocessing of your SVGs](#svg-processing).
 
 Make sure to enable `preserveWidthHeight` for best compatibility. This option is not enabled by default as it was not
 done historically by the plugin, and suddenly doing it would be a breaking change.
+
+[#26]: https://github.com/cyyynthia/vite-plugin-magical-svg/pull/26
