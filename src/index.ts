@@ -28,7 +28,7 @@
 
 import type { Plugin, FilterPattern } from 'vite'
 import type { PluginContext as RollupPluginContext, OutputOptions as RollupOutputOptions } from 'rollup'
-import type { PluginContext as RolldownPluginContext, OutputOptions as RolldownOutputOptions } from 'rolldown'
+import type { PluginContext as RolldownPluginContext, OutputOptions as RolldownOutputOptions, RolldownMagicString } from 'rolldown'
 import type { Config } from 'svgo'
 
 import { createHash } from 'node:crypto'
@@ -37,15 +37,13 @@ import { basename, extname, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { createFilter } from 'vite'
-import { parseStringPromise as parseXml } from 'xml2js'
 import { optimize as svgoOptimize } from 'svgo'
 import MagicString from 'magic-string'
 
 import resolve from './resolve.js'
-import { stringify as stringifyXml, XML2JS_PARSE_OPTS } from './xml.ts'
+import { stringify as stringifyXml } from './xml.ts'
 import type { SupportedTarget } from './codegen.js'
 import {
-	generateId,
 	transformRefs,
 	hashSymbols,
 	transformSvg,
@@ -55,9 +53,11 @@ import {
 	generateProdInlineCode,
 	generateProdSpriteCode,
 	type SymbolIdGenerator,
+	parseSvg,
 } from './transform.js'
 
 type PluginContext = RollupPluginContext | RolldownPluginContext
+type MagicStringInstance = (MagicString & { isRolldownMagicString?: undefined }) | RolldownMagicString | undefined
 
 type SvgAsset = { sources: string[]; xml: any }
 type AssetName = NonNullable<RollupOutputOptions['assetFileNames'] | RolldownOutputOptions['assetFileNames']>
@@ -89,27 +89,20 @@ async function load (
 
 	const imports: string[] = []
 	const raw = await readFile(file, 'utf8')
-	let xml
+	let parsed
 	try {
-		xml = await parseXml(raw, XML2JS_PARSE_OPTS)
+		parsed = await parseSvg(raw, file, symbolIdGen)
 	} catch (e) {
 		const msg = e instanceof Error ? e.message : e?.toString()
-		ctx.error(`Could not load SVG: invalid XML (${msg}) (in ${fileFriendlyName})`)
+		ctx.error(`Could not load SVG: ${msg} (in ${fileFriendlyName})`)
+		throw 0 // Unreachable, seems like TS7 has a regression with functions that never return?
 	}
 
-	if (!xml) {
-		ctx.error(`Could not load SVG: empty file (in ${fileFriendlyName})`)
-	}
-
-	if (!('svg' in xml)) {
-		ctx.error(`Could not load SVG: Top-level XML element isn't \`svg\` (in ${fileFriendlyName})`)
-	}
-
-	if (!xml.svg) {
+	if (parsed.empty) {
 		ctx.warn(`${fileFriendlyName} is an empty SVG.`)
 	}
 
-	await transformRefs (xml.svg, async (ref, isFile) => {
+	await transformRefs(parsed.xml.svg, async (ref, isFile) => {
 		const resolved = await ctx.resolve(ref, file)
 		if (!resolved?.id) return null
 
@@ -122,11 +115,7 @@ async function load (
 		return importUrl
 	})
 
-	if (typeof xml.svg !== 'object') xml.svg = { _: xml.svg }
-	xml.svg.$ = xml.svg.$ ?? {}
-	xml.svg.$.id = symbolIdGen?.(file, raw) || generateId(raw);
-
-	return [ raw, xml, imports ]
+	return [ raw, parsed.xml, imports ]
 }
 
 function generateFilename (template: AssetName, file: string, raw: string) {
@@ -141,7 +130,7 @@ function generateFilename (template: AssetName, file: string, raw: string) {
 			.replace(/\[name]/g, name)
 			.replace(/\[extname]/g, ext)
 			.replace(/\[ext]/g, ext.slice(1))
-			.replace(/\[hash]/g, hash);
+			.replace(/\[hash]/g, hash)
 	}
 
 	return template({
@@ -344,11 +333,11 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				}
 			}
 		},
-		renderChunk (code) {
+		renderChunk(code, _, __, meta) {
 			let match
-			let magicString
+			let magicString: MagicStringInstance
 			while ((match = ASSET_RE.exec(code))) {
-				magicString = magicString || (magicString = new MagicString(code))
+				magicString = magicString || (magicString = meta?.magicString ?? new MagicString(code))
 
 				const spriteId = match[1]!
 				const assetId = sprites.get(spriteId)!
@@ -367,8 +356,8 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 			if (!magicString) return null
 
 			return {
-				code: magicString.toString(),
-				map: sourcemap ? magicString.generateMap({ hires: true }) : null
+				code: magicString.isRolldownMagicString ? magicString : magicString.toString(),
+				map: sourcemap && !magicString.isRolldownMagicString ? magicString.generateMap({ hires: true }) : null
 			}
 		},
 		async generateBundle () {
@@ -384,9 +373,9 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 						asset.xml.svg.$$ = asset.xml.svg.$$.filter((s: any) => used.has(s.$.id))
 					} else {
 						// This is a file. We can know if the file has been tree-shaken by checking `isIncluded`.
+						// We need to check if `isIncluded` exists because Rolldown doesn't expose it though...
 						const mdl = this.getModuleInfo(assetId)
-						// @ts-expect-error -- TODO: Rolldown's garbage compat strikes again! :)
-						if (!mdl?.isIncluded) continue // Skip the file
+						if (mdl && 'isIncluded' in mdl && !mdl.isIncluded) continue // Skip the file
 					}
 				}
 

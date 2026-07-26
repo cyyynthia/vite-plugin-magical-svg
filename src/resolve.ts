@@ -40,6 +40,7 @@ async function findPackageRoot (path: string) {
 	return null
 }
 
+/** @internal */
 export default async function dumbNodeResolve (id: string, importer: string) {
 	const pkgBase = await findPackageRoot(importer)
 	if (!pkgBase) return null

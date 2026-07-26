@@ -31,10 +31,30 @@ import { parseStringPromise as parseXml } from 'xml2js'
 import { generateDev, generateProd, inlineSymbol, type SupportedTarget } from './codegen.js'
 import { XML2JS_PARSE_OPTS } from './xml.ts'
 
-export function generateId (str: string) {
+export type SymbolIdGenerator = (file: string, raw: string) => string | null | void
+
+export type SvgTransformConfig = {
+	restoreMissingViewBox?: boolean | undefined
+	setFillStrokeColor?: boolean | string | undefined
+	preserveWidthHeight?: boolean | undefined
+	setWidthHeight?: { width: string; height: string } | undefined
+	skipRecolor?: boolean | undefined
+}
+
+/** @internal */
+export type ParsedSvg = {
+	xml: any
+	id: string
+	empty: boolean
+}
+
+/** @internal */
+export function generateId(str: string) {
+	// Prepend an underscore to guarantee the validity of the id
 	return '_' + createHash('sha256').update(str).digest('hex').slice(0, 8)
 }
 
+/** @internal */
 export function traverseSvg (xml: any, handler: (tag: string, xml: any) => Promise<void> | void): Promise<any> {
 	if (typeof xml !== 'object') return Promise.resolve()
 	const promises = []
@@ -54,6 +74,7 @@ export function traverseSvg (xml: any, handler: (tag: string, xml: any) => Promi
 	return Promise.all(promises)
 }
 
+/** @internal */
 export function transformRefs (xml: any, fn: (ref: string, isFile: boolean) => Promise<string | null>) {
 	return traverseSvg(xml, async (tag, element) => {
 		if ((tag === 'image' || tag === 'use') && element.$?.href) {
@@ -63,6 +84,7 @@ export function transformRefs (xml: any, fn: (ref: string, isFile: boolean) => P
 	})
 }
 
+/** @internal */
 export function hashSymbols (xml: any) {
 	return traverseSvg(xml, (tag, element) => {
 		if (tag === 'use' && element.$?.href) {
@@ -71,6 +93,7 @@ export function hashSymbols (xml: any) {
 	})
 }
 
+/** @internal */
 export function setFillStrokeColor (value: true | string, xml: any) {
 	const color = value === true ? 'currentColor' : value
 	return traverseSvg(xml, (_, element) => {
@@ -81,42 +104,42 @@ export function setFillStrokeColor (value: true | string, xml: any) {
 	})
 }
 
-export type SymbolIdGenerator = (file: string, raw: string) => string | null | void
-
 /**
  * Parse raw SVG content into an xml2js object and assign a symbol ID.
  * This is the pure parsing step -- no file I/O, no Vite plugin context needed.
+ * @internal
  */
-export async function parseSvg (
-	raw: string,
-	file: string,
-	symbolIdGen?: SymbolIdGenerator
-): Promise<{ xml: any; id: string }> {
-	const xml = await parseXml(raw, XML2JS_PARSE_OPTS)
-
-	if (!xml || !('svg' in xml)) {
-		throw new Error(`Could not load SVG: invalid or non-SVG XML (in ${file})`)
+export async function parseSvg (raw: string, file: string, symbolIdGen?: SymbolIdGenerator): Promise<ParsedSvg> {
+	let xml
+	try {
+		xml = await parseXml(raw, XML2JS_PARSE_OPTS)
+	} catch (e) {
+		const msg = e instanceof Error ? e.message : e?.toString()
+		throw new Error(`invalid XML (${msg})`)
 	}
+
+	if (!xml) {
+		throw new Error('empty file')
+	}
+
+	if (!('svg' in xml)) {
+		throw new Error('Top-level XML element isn\'t `svg`')
+	}
+
+	const empty = !xml.svg
 
 	if (typeof xml.svg !== 'object') xml.svg = { _: xml.svg }
 	xml.svg.$ = xml.svg.$ ?? {}
 	xml.svg.$.id = symbolIdGen?.(file, raw) || generateId(raw)
 
-	return { xml, id: xml.svg.$.id as string }
-}
-
-export type SvgTransformConfig = {
-	restoreMissingViewBox?: boolean | undefined
-	setFillStrokeColor?: boolean | string | undefined
-	preserveWidthHeight?: boolean | undefined
-	setWidthHeight?: { width: string; height: string } | undefined
-	skipRecolor?: boolean | undefined
+	return { xml, id: xml.svg.$.id as string, empty }
 }
 
 /**
  * Apply SVG attribute transformations (viewBox restoration, fill/stroke recoloring,
  * width/height manipulation). Mutates the xml2js object in place and returns
  * viewBox metadata.
+ * @internal
  */
 export async function transformSvg (
 	xml: any,
@@ -152,6 +175,7 @@ export async function transformSvg (
 /**
  * Generate module code for file mode: keeps the original export default (URL string).
  * The caller should pass the full code as `code`.
+ * @internal
  */
 export function generateFileCode (code: string): string {
 	return code
@@ -159,6 +183,7 @@ export function generateFileCode (code: string): string {
 
 /**
  * Generate module code for dev mode: uses createSvgDEV with inline SVG content.
+ * @internal
  */
 export function generateDevCode (target: SupportedTarget, preamble: string, xml: any): string {
 	return [ preamble, generateDev(target, xml) ].join('\n')
@@ -167,6 +192,7 @@ export function generateDevCode (target: SupportedTarget, preamble: string, xml:
 /**
  * Generate module code for dev-inline mode: hashes the symbol ID, emits a
  * createSvg call with a fragment reference, and appends the inline symbol IIFE.
+ * @internal
  */
 export function generateDevInlineCode (target: SupportedTarget, preamble: string, xml: any): string {
 	xml.svg.$.id = generateId(xml.svg.$.id)
@@ -180,6 +206,7 @@ export function generateDevInlineCode (target: SupportedTarget, preamble: string
 /**
  * Generate module code for prod-inline mode: emits a createSvg call with a
  * fragment reference to a symbol that will be inlined in the HTML.
+ * @internal
  */
 export function generateProdInlineCode (
 	target: SupportedTarget,
@@ -196,6 +223,7 @@ export function generateProdInlineCode (
 /**
  * Generate module code for prod-sprite mode: emits a createSvg call with a
  * placeholder that will be replaced with the sprite URL during renderChunk.
+ * @internal
  */
 export function generateProdSpriteCode (
 	target: SupportedTarget,

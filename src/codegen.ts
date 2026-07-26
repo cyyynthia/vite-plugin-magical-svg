@@ -52,6 +52,7 @@ export type SupportedTarget =
 	| 'solid'
 	| 'ember'
 
+/** @internal */
 export function generateDev (target: SupportedTarget, xml: any): string {
 	return `
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/${target}.js';
@@ -64,6 +65,7 @@ export function generateDev (target: SupportedTarget, xml: any): string {
 	`
 }
 
+/** @internal */
 export function generateProd (target: SupportedTarget, viewBox: XmlValue, width: XmlValue, height: XmlValue, symbol: string): string {
 	return `
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/${target}.js';
@@ -76,6 +78,7 @@ export function generateProd (target: SupportedTarget, viewBox: XmlValue, width:
 	`
 }
 
+/** @internal */
 export function inlineSymbol (xml: any): string {
 	return `
 		;(() => {

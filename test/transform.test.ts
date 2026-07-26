@@ -97,7 +97,7 @@ describe('parseSvg', () => {
 	})
 
 	it('rejects non-SVG XML', async () => {
-		await expect(parseSvg('<html></html>', 'bad.svg')).rejects.toThrow('invalid or non-SVG XML')
+		await expect(parseSvg('<html></html>', 'bad.svg')).rejects.toThrow('Top-level XML element isn\'t `svg`')
 	})
 
 	it('parses an empty SVG element', async () => {
