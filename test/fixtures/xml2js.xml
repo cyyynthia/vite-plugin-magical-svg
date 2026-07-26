@@ -1,0 +1,69 @@
+<!--
+	SPDX-FileCopyrightText: Copyright 2010, 2011, 2012, 2013. All rights reserved.
+	SPDX-License-Identifier: MIT
+
+	Fixture from the xml2js project.
+
+	https://github.com/Leonidas-from-XIV/node-xml2js/blob/7173c245aab4c2b417cd4c24f0b54e697a369864/test/fixtures/sample.xml
+-->
+<sample>
+  <chartest desc="Test for CHARs">Character data here!</chartest>
+  <cdatatest desc="Test for CDATA" misc="true"><![CDATA[CDATA here!]]></cdatatest>
+  <cdatawhitespacetest desc="Test for CDATA with whitespace" misc="true"><![CDATA[   ]]></cdatawhitespacetest>
+  <nochartest desc="No data" misc="false"/>
+  <nochildrentest desc="No data" misc="false"/>
+  <whitespacetest desc="Test for normalizing and trimming">
+    Line One
+    Line Two
+  </whitespacetest>
+  <listtest attr="Attribute">
+    <item>
+      This <subitem>Foo(1)</subitem> is
+      <subitem>Foo(2)</subitem>
+      character
+      <subitem>Foo(3)</subitem>
+      data!
+      <subitem>Foo(4)</subitem>
+    </item>
+    <item>Qux.</item>
+    <item>Quux.</item>
+    <single>Single</single>
+  </listtest>
+  <arraytest>
+    <item><subitem>Baz.</subitem></item>
+    <item><subitem>Foo.</subitem><subitem>Bar.</subitem></item>
+  </arraytest>
+  <emptytest/>
+  <tagcasetest>
+    <tAg>something</tAg>
+    <TAG>something else</TAG>
+    <tag>something third</tag>
+  </tagcasetest>
+  <ordertest>
+    <one>1</one>
+    <two>2</two>
+    <three>3</three>
+    <one>4</one>
+    <two>5</two>
+    <three>6</three>
+  </ordertest>
+  <validatortest>
+    <emptyarray/>
+    <oneitemarray>
+      <item>Bar.</item>
+    </oneitemarray>
+    <numbertest>42</numbertest>
+    <stringtest>43</stringtest>
+  </validatortest>
+  <pfx:top xmlns:pfx="http://foo.com" pfx:attr="baz">
+    <middle xmlns="http://bar.com"/>
+  </pfx:top>
+  <attrNameProcessTest camelCaseAttr="camelCaseAttrValue" lowercaseattr="lowercaseattrvalue" />
+  <attrValueProcessTest camelCaseAttr="camelCaseAttrValue" lowerCaseAttr="lowercaseattrvalue" />
+  <tagNameProcessTest/>
+  <valueProcessTest>some value</valueProcessTest>
+  <textordertest>this is text with <b>markup</b>   <em>like this</em> in the middle</textordertest>
+  <emptytestanother>
+
+  </emptytestanother>
+</sample>

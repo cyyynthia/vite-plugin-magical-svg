@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+	<rect class="bg" width="200" height="200" rx="12" />
+
+	<text class="title" x="100" y="30">Style Tag Test</text>
+
+	<circle class="circle-red" cx="50" cy="100" r="30" />
+	<text class="label" x="50" y="105">R</text>
+
+	<circle class="circle-blue" cx="100" cy="100" r="30" />
+	<text class="label" x="100" y="105">B</text>
+
+	<circle class="circle-green" cx="150" cy="100" r="30" />
+	<text class="label" x="150" y="105">G</text>
+
+	<text class="label" x="100" y="175">Styled via &lt;style&gt;</text>
+</svg>

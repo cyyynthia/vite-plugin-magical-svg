@@ -26,12 +26,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Builder } from 'xml2js'
+import { stringify } from './xml.ts'
 
 type XmlValue = string | undefined
 
 function renderHtml (xml: any, useSymbol: boolean) {
-	const symbol = new Builder({ headless: true, renderOpts: { pretty: false } }).buildObject({ symbol: xml.svg })
+	const symbol = stringify({ '#name': 'symbol', $: xml.svg.$, $$: xml.svg.$$ })
 	return useSymbol
 		? JSON.stringify(`${symbol}<use href='#${xml.svg.$.id}'/>`)
 		: JSON.stringify(symbol)

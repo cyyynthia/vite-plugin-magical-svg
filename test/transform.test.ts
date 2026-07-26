@@ -29,7 +29,7 @@
 import { describe, it, expect } from 'vitest'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import { Builder } from 'xml2js'
+import { stringify } from '../src/xml.js'
 import {
 	generateId,
 	parseSvg,
@@ -41,8 +41,20 @@ import {
 const FIXTURES = resolve(import.meta.dirname, 'fixtures')
 const fixture = (name: string) => resolve(FIXTURES, name)
 
-function buildXml(xml: any): string {
-	return new Builder({ headless: true }).buildObject(xml)
+/**
+ * Extract the ordered list of tag names from an SVG content string.
+ */
+function extractElementOrder(content: string): string[] {
+	return content.match(/<(\w+)[\s>]/g)?.map((t) => t.replace(/</, "").replace(/[\s>]/, "")) ?? []
+}
+
+/**
+ * Extract the inner content of the root <svg> element.
+ */
+function extractSvgContent(svg: string): string {
+	const match = svg.match(/<svg[^>]*>([\s\S]*?)<\/svg>/)
+	if (!match) throw new Error('No <svg> found in SVG output')
+	return match[1].trim()
 }
 
 describe('generateId', () => {
@@ -103,7 +115,7 @@ describe('transformSvg', () => {
 		const { xml } = await parseSvg(raw, 'no-viewbox.svg')
 
 		const vb = await transformSvg(xml, {})
-		const result = buildXml(xml)
+		const result = stringify(xml.svg)
 
 		expect(result).toMatchSnapshot()
 		expect(vb.width).toBeUndefined()
@@ -115,7 +127,7 @@ describe('transformSvg', () => {
 		const { xml } = await parseSvg(raw, 'no-viewbox.svg')
 
 		const vb = await transformSvg(xml, { preserveWidthHeight: true })
-		const result = buildXml(xml)
+		const result = stringify(xml.svg)
 
 		expect(result).toMatchSnapshot()
 		expect(vb.width).toBe('100')
@@ -130,7 +142,7 @@ describe('transformSvg', () => {
 			restoreMissingViewBox: true,
 			preserveWidthHeight: true
 		})
-		const result = buildXml(xml)
+		const result = stringify(xml.svg)
 
 		expect(result).toMatchSnapshot()
 		expect(vb.viewBox).toBe('0 0 100 100')
@@ -153,7 +165,7 @@ describe('transformSvg', () => {
 		const vb = await transformSvg(xml, {
 			setWidthHeight: { width: '1em', height: '1em' }
 		})
-		const result = buildXml(xml)
+		const result = stringify(xml.svg)
 
 		expect(result).toMatchSnapshot()
 		expect(vb.width).toBe('1em')
@@ -181,7 +193,7 @@ describe('setFillStrokeColor', () => {
 		const { xml } = await parseSvg(raw, 'simple.svg')
 
 		await setFillStrokeColor(true, xml)
-		const result = buildXml(xml)
+		const result = stringify(xml.svg)
 
 		expect(result).toMatchSnapshot()
 	})
@@ -191,7 +203,7 @@ describe('setFillStrokeColor', () => {
 		const { xml } = await parseSvg(raw, 'simple.svg')
 
 		await setFillStrokeColor('var(--icon-color)', xml)
-		const result = buildXml(xml)
+		const result = stringify(xml.svg)
 
 		expect(result).toMatchSnapshot()
 	})
@@ -201,7 +213,7 @@ describe('setFillStrokeColor', () => {
 		const { xml } = await parseSvg(raw, 'multi-colors.svg')
 
 		await setFillStrokeColor(true, xml)
-		const result = buildXml(xml)
+		const result = stringify(xml.svg)
 
 		expect(result).toMatchSnapshot()
 	})
@@ -214,7 +226,7 @@ describe('setFillStrokeColor', () => {
 			setFillStrokeColor: true,
 			skipRecolor: true
 		})
-		const result = buildXml(xml)
+		const result = stringify(xml.svg)
 
 		// fill should still be #ff0000, not currentColor
 		expect(result).toContain('#ff0000')
@@ -245,7 +257,7 @@ describe('transformSvg full pipeline', () => {
 			setFillStrokeColor: 'currentColor',
 			setWidthHeight: { width: '1em', height: '1em' }
 		})
-		const result = buildXml(xml)
+		const result = stringify(xml.svg)
 
 		expect(result).toMatchSnapshot()
 		expect(vb.viewBox).toBe('0 0 100 100')
@@ -260,8 +272,25 @@ describe('transformSvg full pipeline', () => {
 		const { xml } = await parseSvg(raw, 'with-attrs.svg')
 
 		await transformSvg(xml, { setFillStrokeColor: true })
-		const result = buildXml(xml)
+		const result = stringify(xml.svg)
 
 		expect(result).toMatchSnapshot()
+	})
+})
+
+describe('element order is preserved', () => {
+	it('preserves element order after transformations', async () => {
+		const raw = await readFile(fixture('element-order.svg'), 'utf8')
+		const { xml } = await parseSvg(raw, 'element-order.svg')
+
+		const result = stringify(xml)
+
+		const originalSvg = extractSvgContent(raw)
+		const originalOrder = extractElementOrder(originalSvg)
+
+		const content = extractSvgContent(result)
+		const transformedOrder = extractElementOrder(content)
+
+		expect(transformedOrder).toEqual(originalOrder)
 	})
 })

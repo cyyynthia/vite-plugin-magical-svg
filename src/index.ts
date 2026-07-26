@@ -37,11 +37,12 @@ import { basename, extname, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { createFilter } from 'vite'
-import { Builder, parseStringPromise as parseXml } from 'xml2js'
+import { parseStringPromise as parseXml } from 'xml2js'
 import { optimize as svgoOptimize } from 'svgo'
 import MagicString from 'magic-string'
 
 import resolve from './resolve.js'
+import { stringify as stringifyXml, XML2JS_PARSE_OPTS } from './xml.ts'
 import type { SupportedTarget } from './codegen.js'
 import {
 	generateId,
@@ -90,7 +91,7 @@ async function load (
 	const raw = await readFile(file, 'utf8')
 	let xml
 	try {
-		xml = await parseXml(raw)
+		xml = await parseXml(raw, XML2JS_PARSE_OPTS)
 	} catch (e) {
 		const msg = e instanceof Error ? e.message : e?.toString()
 		ctx.error(`Could not load SVG: invalid XML (${msg}) (in ${fileFriendlyName})`)
@@ -203,7 +204,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 				const head = html.slice(0, bodyStart)
 				const body = html.slice(bodyStart)
-				const svg = new Builder({ headless: true }).buildObject(inline.xml)
+				const svg = stringifyXml(inline.xml)
 				return head + svg + body
 			}
 
@@ -252,8 +253,9 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 						sources: [],
 						xml: {
 							svg: {
+								'#name': 'svg',
 								$: { width: 0, height: 0 },
-								symbol: []
+								$$: []
 							}
 						}
 					}
@@ -273,7 +275,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 						}
 					}
 
-					sprite.xml.svg.symbol.push(xml.svg)
+					sprite.xml.svg.$$.push({ '#name': 'symbol', $: xml.svg.$, $$: xml.svg.$$ })
 					sprite.sources.push(raw)
 					symbolIds.set(id, xml.svg.$.id)
 				}
@@ -377,9 +379,9 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 				// Treeshake symbols
 				if (treeshake) {
-					if (asset.xml.svg.symbol) {
+					if (asset.xml.svg.$$) {
 						const used = usedAssets.get(assetId)!
-						asset.xml.svg.symbol = asset.xml.svg.symbol.filter((s: any) => used.has(s.$.id))
+						asset.xml.svg.$$ = asset.xml.svg.$$.filter((s: any) => used.has(s.$.id))
 					} else {
 						// This is a file. We can know if the file has been tree-shaken by checking `isIncluded`.
 						const mdl = this.getModuleInfo(assetId)
@@ -401,8 +403,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 					return file ? `${base}${file}` : null
 				})
 
-				const builder = new Builder()
-				let xml = builder.buildObject(asset.xml)
+				let xml = stringifyXml(asset.xml)
 				if (config.svgo !== false) {
 					const opts: Config = {
 						plugins: [

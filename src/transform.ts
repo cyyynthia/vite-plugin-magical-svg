@@ -29,6 +29,7 @@
 import { createHash } from 'node:crypto'
 import { parseStringPromise as parseXml } from 'xml2js'
 import { generateDev, generateProd, inlineSymbol, type SupportedTarget } from './codegen.js'
+import { XML2JS_PARSE_OPTS } from './xml.ts'
 
 export function generateId (str: string) {
 	return '_' + createHash('sha256').update(str).digest('hex').slice(0, 8)
@@ -91,7 +92,7 @@ export async function parseSvg (
 	file: string,
 	symbolIdGen?: SymbolIdGenerator
 ): Promise<{ xml: any; id: string }> {
-	const xml = await parseXml(raw)
+	const xml = await parseXml(raw, XML2JS_PARSE_OPTS)
 
 	if (!xml || !('svg' in xml)) {
 		throw new Error(`Could not load SVG: invalid or non-SVG XML (in ${file})`)

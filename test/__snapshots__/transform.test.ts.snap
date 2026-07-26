@@ -1,60 +1,19 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`setFillStrokeColor > preserves fill="none" and stroke="none" 1`] = `
-"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" id="_86697e16">
-  <g fill="currentColor">
-    <rect x="4" y="4" width="16" height="16" fill="currentColor"/>
-    <rect x="28" y="4" width="16" height="16" fill="none" stroke="currentColor"/>
-    <rect x="4" y="28" width="16" height="16" fill="currentColor" stroke="none"/>
-  </g>
-</svg>"
-`;
+exports[`setFillStrokeColor > preserves fill="none" and stroke="none" 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" id="_86697e16"><g fill="currentColor"><rect x="4" y="4" width="16" height="16" fill="currentColor"/><rect x="28" y="4" width="16" height="16" fill="none" stroke="currentColor"/><rect x="4" y="28" width="16" height="16" fill="currentColor" stroke="none"/></g></svg>"`;
 
-exports[`setFillStrokeColor > replaces fill and stroke with a custom color 1`] = `
-"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="_c44c3d0e">
-  <circle cx="12" cy="12" r="10" fill="var(--icon-color)" stroke="var(--icon-color)"/>
-</svg>"
-`;
+exports[`setFillStrokeColor > replaces fill and stroke with a custom color 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="_c44c3d0e"><circle cx="12" cy="12" r="10" fill="var(--icon-color)" stroke="var(--icon-color)"/></svg>"`;
 
-exports[`setFillStrokeColor > replaces fill and stroke with currentColor 1`] = `
-"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="_c44c3d0e">
-  <circle cx="12" cy="12" r="10" fill="currentColor" stroke="currentColor"/>
-</svg>"
-`;
+exports[`setFillStrokeColor > replaces fill and stroke with currentColor 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="_c44c3d0e"><circle cx="12" cy="12" r="10" fill="currentColor" stroke="currentColor"/></svg>"`;
 
-exports[`transformSvg > preserves width/height when configured 1`] = `
-"<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" id="_2c1a9ee3">
-  <rect x="10" y="10" width="80" height="80" fill="#00ff00"/>
-</svg>"
-`;
+exports[`transformSvg > preserves width/height when configured 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" id="_2c1a9ee3"><rect x="10" y="10" width="80" height="80" fill="#00ff00"/></svg>"`;
 
-exports[`transformSvg > restores missing viewBox from width/height 1`] = `
-"<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" id="_2c1a9ee3" viewBox="0 0 100 100">
-  <rect x="10" y="10" width="80" height="80" fill="#00ff00"/>
-</svg>"
-`;
+exports[`transformSvg > restores missing viewBox from width/height 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" id="_2c1a9ee3" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" fill="#00ff00"/></svg>"`;
 
-exports[`transformSvg > sets width/height when configured and not already present 1`] = `
-"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="_c44c3d0e" width="1em" height="1em">
-  <circle cx="12" cy="12" r="10" fill="#ff0000" stroke="#000000"/>
-</svg>"
-`;
+exports[`transformSvg > sets width/height when configured and not already present 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="_c44c3d0e" width="1em" height="1em"><circle cx="12" cy="12" r="10" fill="#ff0000" stroke="#000000"/></svg>"`;
 
-exports[`transformSvg > strips width/height by default 1`] = `
-"<svg xmlns="http://www.w3.org/2000/svg" id="_2c1a9ee3">
-  <rect x="10" y="10" width="80" height="80" fill="#00ff00"/>
-</svg>"
-`;
+exports[`transformSvg > strips width/height by default 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" id="_2c1a9ee3"><rect x="10" y="10" width="80" height="80" fill="#00ff00"/></svg>"`;
 
-exports[`transformSvg full pipeline > applies all transforms together 1`] = `
-"<svg xmlns="http://www.w3.org/2000/svg" id="_2c1a9ee3" viewBox="0 0 100 100" width="1em" height="1em">
-  <rect x="10" y="10" width="80" height="80" fill="currentColor"/>
-</svg>"
-`;
+exports[`transformSvg full pipeline > applies all transforms together 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" id="_2c1a9ee3" viewBox="0 0 100 100" width="1em" height="1em"><rect x="10" y="10" width="80" height="80" fill="currentColor"/></svg>"`;
 
-exports[`transformSvg full pipeline > handles SVG with class/aria/data attributes 1`] = `
-"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" class="icon" aria-hidden="true" data-testid="icon" id="_126d66d9">
-  <path d="M16 2L2 16l14 14 14-14z" fill="currentColor" stroke="currentColor"/>
-  <circle cx="16" cy="16" r="4" fill="none" stroke="currentColor"/>
-</svg>"
-`;
+exports[`transformSvg full pipeline > handles SVG with class/aria/data attributes 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" class="icon" aria-hidden="true" data-testid="icon" id="_126d66d9"><path d="M16 2L2 16l14 14 14-14z" fill="currentColor" stroke="currentColor"/><circle cx="16" cy="16" r="4" fill="none" stroke="currentColor"/></svg>"`;
