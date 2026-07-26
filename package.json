@@ -1,6 +1,6 @@
 {
 	"name": "vite-plugin-magical-svg",
-	"version": "1.9.0",
+	"version": "1.10.0",
 	"description": "An all-in-one Vite plugin that magically makes working with SVGs and bundling them a breeze",
 	"keywords": [
 		"vite-plugin",
@@ -53,10 +53,10 @@
 		"@types/node": "^26.1.1",
 		"@types/xml2js": "^0.4.14",
 		"pin-github-action": "^3.5.1",
-		"rolldown": "^1.1.5",
+		"rolldown": "^1.2.0",
 		"rollup": "^4.62.2",
 		"typescript": "^7.0.2",
-		"vite": "^8.1.4",
+		"vite": "^8.1.5",
 		"vitest": "^4.1.10"
 	},
 	"peerDependencies": {
@@ -65,7 +65,7 @@
 	"devEngines": {
 		"packageManager": {
 			"name": "pnpm",
-			"version": "11.7.0",
+			"version": "11.17.0",
 			"onFail": "error"
 		},
 		"runtime": {

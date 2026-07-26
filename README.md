@@ -1,6 +1,7 @@
 # Magical SVG 🪄
 [![License](https://img.shields.io/github/license/cyyynthia/vite-plugin-magical-svg.svg?style=flat-square)](https://github.com/cyyynthia/vite-plugin-magical-svg/blob/mistress/LICENSE)
 [![npm](https://img.shields.io/npm/v/vite-plugin-magical-svg?style=flat-square)](https://npmx.dev/vite-plugin-magical-svg)
+[![Build](https://img.shields.io/github/actions/workflow/status/cyyynthia/vite-plugin-magical-svg/build.yaml?style=flat-square&logo=github)](https://github.com/cyyynthia/vite-plugin-magical-svg/actions/workflows/build.yaml)
 
 [![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-support%20me-EA4AAA?style=flat-square)](https://github.com/sponsors/cyyynthia)
 [![Weekly downloads](https://img.shields.io/npm/dw/vite-plugin-magical-svg?style=flat-square)](https://npmx.dev/vite-plugin-magical-svg)
