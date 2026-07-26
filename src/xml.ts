@@ -1,4 +1,4 @@
-import { ParserOptions } from "xml2js"
+import type { ParserOptions } from 'xml2js'
 
 const HTML_ENTITIES = {
 	'&': '&amp;',

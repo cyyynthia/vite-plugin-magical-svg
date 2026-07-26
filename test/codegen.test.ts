@@ -38,7 +38,7 @@ import {
 	generateDevInlineCode,
 	generateProdInlineCode,
 	generateProdSpriteCode,
-} from '../src/transform.js'
+} from '../src/transform.ts'
 
 const FIXTURES = resolve(import.meta.dirname, 'fixtures')
 const fixture = (name: string) => resolve(FIXTURES, name)

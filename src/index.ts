@@ -40,9 +40,9 @@ import { createFilter } from 'vite'
 import { optimize as svgoOptimize } from 'svgo'
 import MagicString from 'magic-string'
 
-import resolve from './resolve.js'
+import resolve from './resolve.ts'
 import { stringify as stringifyXml } from './xml.ts'
-import type { SupportedTarget } from './codegen.js'
+import type { SupportedTarget } from './codegen.ts'
 import {
 	transformRefs,
 	hashSymbols,
@@ -54,7 +54,7 @@ import {
 	generateProdSpriteCode,
 	type SymbolIdGenerator,
 	parseSvg,
-} from './transform.js'
+} from './transform.ts'
 
 type PluginContext = RollupPluginContext | RolldownPluginContext
 type MagicStringInstance = (MagicString & { isRolldownMagicString?: undefined }) | RolldownMagicString | undefined

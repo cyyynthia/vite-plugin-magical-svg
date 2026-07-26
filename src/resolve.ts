@@ -26,9 +26,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { dirname, resolve } from 'path'
-import { readdir } from 'fs/promises'
-import { existsSync } from 'fs'
+import { dirname, resolve } from 'node:path'
+import { readdir, stat } from 'node:fs/promises'
+
+async function exists(path: string | URL) {
+	try {
+		await stat(path)
+		return true
+	} catch (e) {
+		if (e instanceof Error && (e as any).code === 'ENOENT') return false
+		throw e
+	}
+}
 
 async function findPackageRoot (path: string) {
 	do {
@@ -46,7 +55,7 @@ export default async function dumbNodeResolve (id: string, importer: string) {
 	if (!pkgBase) return null
 
 	const candidate = resolve(pkgBase, 'node_modules', id)
-	if (!existsSync(candidate)) return null
+	if (!await exists(candidate)) return null
 
 	return candidate
 }

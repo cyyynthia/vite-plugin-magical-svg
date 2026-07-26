@@ -28,7 +28,7 @@
 
 import { createHash } from 'node:crypto'
 import { parseStringPromise as parseXml } from 'xml2js'
-import { generateDev, generateProd, inlineSymbol, type SupportedTarget } from './codegen.js'
+import { generateDev, generateProd, inlineSymbol, type SupportedTarget } from './codegen.ts'
 import { XML2JS_PARSE_OPTS } from './xml.ts'
 
 export type SymbolIdGenerator = (file: string, raw: string) => string | null | void

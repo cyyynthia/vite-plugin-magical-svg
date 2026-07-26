@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { expect, it } from 'vitest'
 import { Builder, parseStringPromise } from 'xml2js'
 
-import { stringify, XML2JS_PARSE_OPTS } from '../src/xml.js'
+import { stringify, XML2JS_PARSE_OPTS } from '../src/xml.ts'
 
 const FIXTURES = resolve(import.meta.dirname, 'fixtures')
 const fixture = (name: string) => resolve(FIXTURES, name)

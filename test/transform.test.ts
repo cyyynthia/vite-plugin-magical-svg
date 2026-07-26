@@ -29,14 +29,14 @@
 import { describe, it, expect } from 'vitest'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import { stringify } from '../src/xml.js'
+import { stringify } from '../src/xml.ts'
 import {
 	generateId,
 	parseSvg,
 	transformSvg,
 	setFillStrokeColor,
 	hashSymbols,
-} from '../src/transform.js'
+} from '../src/transform.ts'
 
 const FIXTURES = resolve(import.meta.dirname, 'fixtures')
 const fixture = (name: string) => resolve(FIXTURES, name)
