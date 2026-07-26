@@ -1,6 +1,6 @@
 import { createElementBlock, createElementVNode, markRaw, openBlock } from "vue";
 
-export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, symbol) => {
+export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (symbol, viewBox, width, height) => {
 	// <svg viewBox="{{viewBox}}" width="{{width}}" height="{{height}}"><use href="{{symbol}}" /></svg>
 	let _hoisted_1 = { viewBox, width, height };
 	let _hoisted_2 = createElementVNode("use", { href: symbol }, null, -1);
@@ -13,7 +13,7 @@ export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, symbol)
 	});
 };
 
-export var createSvgDEV = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, xml) => {
+export var createSvgDEV = /*#__NO_SIDE_EFFECTS__*/ (xml, viewBox, width, height) => {
 	// <svg viewBox="{{viewBox}}" width="{{width}}" height="{{height}}" innerHTML="{{xml}}"></svg>
 	let _hoisted_1 = { viewBox, width, height, innerHTML: xml };
 

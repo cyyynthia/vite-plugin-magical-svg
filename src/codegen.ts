@@ -52,15 +52,28 @@ export type SupportedTarget =
 	| 'solid'
 	| 'ember'
 
+function renderArgs(a: string, b: unknown, c: unknown, d: unknown): string {
+	if (d == null) {
+		if (c == null) {
+			if (b == null) {
+				return a
+			}
+
+			return `${a}, '${b}' || void 0`
+		}
+
+		return `${a}, '${b}' || void 0, '${c}' || void 0`
+	}
+
+	return `${a}, '${b}' || void 0, '${c}' || void 0, '${d}' || void 0`
+}
+
 /** @internal */
 export function generateDev (target: SupportedTarget, xml: any): string {
 	return `
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/${target}.js';
 		export default /*#__PURE__*/ createSvgDEV(
-			'${xml.svg.$.viewBox || ''}' || void 0,
-			'${xml.svg.$.width || ''}' || void 0,
-			'${xml.svg.$.height || ''}' || void 0,
-			${renderHtml(xml, true)}
+			${renderArgs(renderHtml(xml, true), xml.svg.$.viewBox, xml.svg.$.width, xml.svg.$.height)}
 		);
 	`
 }
@@ -70,10 +83,7 @@ export function generateProd (target: SupportedTarget, viewBox: XmlValue, width:
 	return `
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/${target}.js';
 		export default /*#__PURE__*/ createSvg(
-			'${viewBox || ''}' || void 0,
-			'${width || ''}' || void 0,
-			'${height || ''}' || void 0,
-			${symbol}
+			${renderArgs(symbol, viewBox, width, height)}
 		);
 	`
 }

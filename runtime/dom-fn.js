@@ -1,4 +1,4 @@
-export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, symbol) => () => {
+export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (symbol, viewBox, width, height) => () => {
 	let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	let use = document.createElementNS("http://www.w3.org/2000/svg", "use");
 	viewBox && svg.setAttribute("viewBox", viewBox);
@@ -9,7 +9,7 @@ export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, symbol)
 	return svg;
 };
 
-export var createSvgDEV = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, xml) => () => {
+export var createSvgDEV = /*#__NO_SIDE_EFFECTS__*/ (xml, viewBox, width, height) => () => {
 	let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	viewBox && svg.setAttribute("viewBox", viewBox);
 	width && svg.setAttribute("width", width);

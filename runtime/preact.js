@@ -1,7 +1,7 @@
 import { h } from "preact";
 import { forwardRef } from "preact/compat";
 
-export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, symbol) => {
+export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (symbol, viewBox, width, height) => {
 	let node = h("use", { href: symbol });
 
 	return forwardRef((props, ref) => {
@@ -9,7 +9,7 @@ export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, symbol)
 	});
 };
 
-export var createSvgDEV = /*#__NO_SIDE_EFFECTS__*/ (viewBox, width, height, xml) => {
+export var createSvgDEV = /*#__NO_SIDE_EFFECTS__*/ (xml, viewBox, width, height) => {
 	return forwardRef((props, ref) => {
 		return h("svg", {
 			ref,
