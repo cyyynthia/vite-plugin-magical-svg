@@ -243,6 +243,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 						xml: {
 							svg: {
 								'#name': 'svg',
+								'#sprite': true,
 								$: { width: 0, height: 0 },
 								$$: []
 							}
@@ -252,6 +253,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 					if (!assets.has(spriteId)) {
 						assets.set(spriteId, sprite)
 						usedAssets.set(spriteId, new Set())
+						sprite.xml.svg.symbol = sprite.xml.svg.$$
 					}
 
 					if (spriteId !== 'inline') {
@@ -368,7 +370,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 				// Treeshake symbols
 				if (treeshake) {
-					if (asset.xml.svg.$$) {
+					if (asset.xml.svg['#sprite']) {
 						const used = usedAssets.get(assetId)!
 						asset.xml.svg.$$ = asset.xml.svg.$$.filter((s: any) => used.has(s.$.id))
 					} else {
