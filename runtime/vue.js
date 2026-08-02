@@ -1,8 +1,8 @@
 import { createElementBlock, createElementVNode, markRaw, openBlock } from "vue";
 
-export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (symbol, viewBox, width, height) => {
-	// <svg viewBox="{{viewBox}}" width="{{width}}" height="{{height}}"><use href="{{symbol}}" /></svg>
-	let _hoisted_1 = { viewBox, width, height };
+export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (symbol, width, height) => {
+	// <svg width="{{width}}" height="{{height}}"><use href="{{symbol}}" /></svg>
+	let _hoisted_1 = { width, height };
 	let _hoisted_2 = createElementVNode("use", { href: symbol }, null, -1);
 	let _hoisted_3 = [_hoisted_2];
 
@@ -13,9 +13,9 @@ export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (symbol, viewBox, width, height)
 	});
 };
 
-export var createSvgDEV = /*#__NO_SIDE_EFFECTS__*/ (xml, viewBox, width, height) => {
-	// <svg viewBox="{{viewBox}}" width="{{width}}" height="{{height}}" innerHTML="{{xml}}"></svg>
-	let _hoisted_1 = { viewBox, width, height, innerHTML: xml };
+export var createSvgDEV = /*#__NO_SIDE_EFFECTS__*/ (xml, width, height) => {
+	// <svg width="{{width}}" height="{{height}}" innerHTML="{{xml}}"></svg>
+	let _hoisted_1 = { width, height, innerHTML: xml };
 
 	return markRaw({
 		render: (_ctx, _cache) => {

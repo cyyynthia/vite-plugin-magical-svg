@@ -144,7 +144,7 @@ export async function parseSvg (raw: string, file: string, symbolIdGen?: SymbolI
 export async function transformSvg (
 	xml: any,
 	config: SvgTransformConfig
-): Promise<{ viewBox: string; width: string; height: string }> {
+): Promise<{ width: string; height: string }> {
 	// Add viewbox if missing
 	if (config.restoreMissingViewBox && !xml.svg.$.viewBox && xml.svg.$.width && xml.svg.$.height) {
 		xml.svg.$.viewBox = `0 0 ${xml.svg.$.width} ${xml.svg.$.height}`
@@ -165,11 +165,15 @@ export async function transformSvg (
 		xml.svg.$.height = config.setWidthHeight.height
 	}
 
-	return {
-		viewBox: xml.svg.$.viewBox,
-		width: xml.svg.$.width,
-		height: xml.svg.$.height
+	let width = xml.svg.$.width
+	let height = xml.svg.$.height
+	if ((!width || !height) && xml.svg.$.viewBox) {
+		const [_mx, _my, w, h] = xml.svg.$.viewBox.split(' ')
+		width = w
+		height = h
 	}
+
+	return { width, height }
 }
 
 /**
@@ -185,8 +189,13 @@ export function generateFileCode (code: string): string {
  * Generate module code for dev mode: uses createSvgDEV with inline SVG content.
  * @internal
  */
-export function generateDevCode (target: SupportedTarget, preamble: string, xml: any): string {
-	return [ preamble, generateDev(target, xml) ].join('\n')
+export function generateDevCode(
+	target: SupportedTarget,
+	preamble: string,
+	viewBox: { width: string; height: string },
+	xml: any
+): string {
+	return [ preamble, generateDev(target, viewBox.width, viewBox.height, xml) ].join('\n')
 }
 
 /**
@@ -194,11 +203,16 @@ export function generateDevCode (target: SupportedTarget, preamble: string, xml:
  * createSvg call with a fragment reference, and appends the inline symbol IIFE.
  * @internal
  */
-export function generateDevInlineCode (target: SupportedTarget, preamble: string, xml: any): string {
+export function generateDevInlineCode (
+	target: SupportedTarget,
+	preamble: string,
+	viewBox: { width: string; height: string },
+	xml: any
+): string {
 	xml.svg.$.id = generateId(xml.svg.$.id)
 	return [
 		preamble,
-		generateProd(target, xml.svg.$.viewBox, xml.svg.$.width, xml.svg.$.height, `'#${xml.svg.$.id}'`),
+		generateProd(target, viewBox.width, viewBox.height, `'#${xml.svg.$.id}'`),
 		inlineSymbol(xml),
 	].join('\n')
 }
@@ -211,12 +225,12 @@ export function generateDevInlineCode (target: SupportedTarget, preamble: string
 export function generateProdInlineCode (
 	target: SupportedTarget,
 	preamble: string,
-	viewBox: { viewBox: string; width: string; height: string },
+	viewBox: { width: string; height: string },
 	symbolId: string,
 ): string {
 	return [
 		preamble,
-		generateProd(target, viewBox.viewBox, viewBox.width, viewBox.height, `'#${symbolId}'`),
+		generateProd(target, viewBox.width, viewBox.height, `'#${symbolId}'`),
 	].join('\n')
 }
 
@@ -228,11 +242,11 @@ export function generateProdInlineCode (
 export function generateProdSpriteCode (
 	target: SupportedTarget,
 	preamble: string,
-	viewBox: { viewBox: string; width: string; height: string },
+	viewBox: { width: string; height: string },
 	symbolId: string,
 ): string {
 	return [
 		preamble,
-		generateProd(target, viewBox.viewBox, viewBox.width, viewBox.height, `__MAGICAL_SVG_SPRITE__${symbolId}__`),
+		generateProd(target, viewBox.width, viewBox.height, `__MAGICAL_SVG_SPRITE__${symbolId}__`),
 	].join('\n')
 }

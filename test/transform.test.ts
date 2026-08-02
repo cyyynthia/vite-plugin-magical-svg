@@ -138,23 +138,34 @@ describe('transformSvg', () => {
 		const raw = await readFile(fixture('no-viewbox.svg'), 'utf8')
 		const { xml } = await parseSvg(raw, 'no-viewbox.svg')
 
-		const vb = await transformSvg(xml, {
+		await transformSvg(xml, {
 			restoreMissingViewBox: true,
 			preserveWidthHeight: true
 		})
 		const result = stringify(xml.svg)
 
 		expect(result).toMatchSnapshot()
-		expect(vb.viewBox).toBe('0 0 100 100')
+		expect(xml.svg.$.viewBox).toBe('0 0 100 100')
+	})
+
+	it('restores missing width/height from viewBox', async () => {
+		const raw = await readFile(fixture('simple.svg'), 'utf8')
+		const { xml } = await parseSvg(raw, 'simple.svg')
+
+		const vb = await transformSvg(xml, { preserveWidthHeight: true })
+		const result = stringify(xml.svg)
+
+		expect(result).toMatchSnapshot()
+		expect(vb.width).toBe('24')
+		expect(vb.height).toBe('24')
 	})
 
 	it('does not overwrite an existing viewBox', async () => {
 		const raw = await readFile(fixture('simple.svg'), 'utf8')
 		const { xml } = await parseSvg(raw, 'simple.svg')
 
-		const vb = await transformSvg(xml, { restoreMissingViewBox: true })
-
-		expect(vb.viewBox).toBe('0 0 24 24')
+		await transformSvg(xml, { restoreMissingViewBox: true })
+		expect(xml.svg.$.viewBox).toBe('0 0 24 24')
 	})
 
 	it('sets width/height when configured and not already present', async () => {
@@ -260,7 +271,7 @@ describe('transformSvg full pipeline', () => {
 		const result = stringify(xml.svg)
 
 		expect(result).toMatchSnapshot()
-		expect(vb.viewBox).toBe('0 0 100 100')
+		expect(xml.svg.$.viewBox).toBe('0 0 100 100')
 		// width/height are stripped (preserveWidthHeight defaults to false),
 		// then setWidthHeight applies
 		expect(vb.width).toBe('1em')

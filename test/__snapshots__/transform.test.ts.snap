@@ -10,6 +10,8 @@ exports[`transformSvg > preserves width/height when configured 1`] = `"<svg xmln
 
 exports[`transformSvg > restores missing viewBox from width/height 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" id="_2c1a9ee3" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" fill="#00ff00"/></svg>"`;
 
+exports[`transformSvg > restores missing width/height from viewBox 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="_c44c3d0e"><circle cx="12" cy="12" r="10" fill="#ff0000" stroke="#000000"/></svg>"`;
+
 exports[`transformSvg > sets width/height when configured and not already present 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="_c44c3d0e" width="1em" height="1em"><circle cx="12" cy="12" r="10" fill="#ff0000" stroke="#000000"/></svg>"`;
 
 exports[`transformSvg > strips width/height by default 1`] = `"<svg xmlns="http://www.w3.org/2000/svg" id="_2c1a9ee3"><rect x="10" y="10" width="80" height="80" fill="#00ff00"/></svg>"`;

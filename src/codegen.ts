@@ -52,39 +52,19 @@ export type SupportedTarget =
 	| 'solid'
 	| 'ember'
 
-function renderArgs(a: string, b: unknown, c: unknown, d: unknown): string {
-	if (d == null) {
-		if (c == null) {
-			if (b == null) {
-				return a
-			}
-
-			return `${a}, '${b}' || void 0`
-		}
-
-		return `${a}, '${b}' || void 0, '${c}' || void 0`
-	}
-
-	return `${a}, '${b}' || void 0, '${c}' || void 0, '${d}' || void 0`
-}
-
 /** @internal */
-export function generateDev (target: SupportedTarget, xml: any): string {
+export function generateDev (target: SupportedTarget, width: XmlValue, height: XmlValue, xml: any): string {
 	return `
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/${target}.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			${renderArgs(renderHtml(xml, true), xml.svg.$.viewBox, xml.svg.$.width, xml.svg.$.height)}
-		);
+		export default /*#__PURE__*/ createSvgDEV(${renderHtml(xml, true)}, ${width}, ${height});
 	`
 }
 
 /** @internal */
-export function generateProd (target: SupportedTarget, viewBox: XmlValue, width: XmlValue, height: XmlValue, symbol: string): string {
+export function generateProd (target: SupportedTarget, width: XmlValue, height: XmlValue, symbol: string): string {
 	return `
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/${target}.js';
-		export default /*#__PURE__*/ createSvg(
-			${renderArgs(symbol, viewBox, width, height)}
-		);
+		export default /*#__PURE__*/ createSvg(${symbol}, ${width}, ${height});
 	`
 }
 
@@ -95,7 +75,6 @@ export function inlineSymbol (xml: any): string {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '${xml.svg.$.viewBox}')
 			svg.innerHTML = ${renderHtml(xml, false)}
 			document.body.prepend(svg)
 		})();

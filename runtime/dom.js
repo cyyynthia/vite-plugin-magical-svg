@@ -1,19 +1,17 @@
-export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (symbol, viewBox, width, height) => {
+export var createSvg = /*#__NO_SIDE_EFFECTS__*/ (symbol, width, height) => {
 	let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	let use = document.createElementNS("http://www.w3.org/2000/svg", "use");
-	viewBox && svg.setAttribute("viewBox", viewBox);
-	width && svg.setAttribute("width", width);
-	height && svg.setAttribute("height", height);
+	svg.setAttribute("width", width);
+	svg.setAttribute("height", height);
 	use.setAttribute("href", symbol);
 	svg.appendChild(use);
 	return svg;
 };
 
-export var createSvgDEV = /*#__NO_SIDE_EFFECTS__*/ (xml, viewBox, width, height) => {
+export var createSvgDEV = /*#__NO_SIDE_EFFECTS__*/ (xml, width, height) => {
 	let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-	viewBox && svg.setAttribute("viewBox", viewBox);
-	width && svg.setAttribute("width", width);
-	height && svg.setAttribute("height", height);
+	svg.setAttribute("width", width);
+	svg.setAttribute("height", height);
 	svg.innerHTML = xml;
 	return svg;
 };

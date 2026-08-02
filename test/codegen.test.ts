@@ -73,7 +73,7 @@ describe.each([
 		await transformSvg(xml, {})
 		await hashSymbols(xml.svg)
 
-		const result = generateDevCode(target, '', xml)
+		const result = generateDevCode(target, '', { width: '24', height: '24' }, xml)
 
 		expect(result).toMatchSnapshot()
 	})
@@ -83,7 +83,7 @@ describe.each([
 		const { xml } = await parseSvg(raw, 'simple.svg')
 		await transformSvg(xml, {})
 
-		const result = generateDevInlineCode(target, '', xml)
+		const result = generateDevInlineCode(target, '', { width: '24', height: '24' }, xml)
 
 		expect(result).toMatchSnapshot()
 		expect(result).toContain('document.createElementNS')
@@ -94,7 +94,7 @@ describe.each([
 		const result = generateProdInlineCode(
 			target,
 			'import "./dep.svg";\n',
-			{ viewBox: '0 0 24 24', width: '', height: '' },
+			{ width: '24', height: '24' },
 			'_abc12345',
 		)
 
@@ -107,7 +107,7 @@ describe.each([
 			const result = generateProdSpriteCode(
 				target,
 				'',
-				{ viewBox: '0 0 24 24', width: '', height: '' },
+				{ width: '24', height: '24' },
 				'_abc12345',
 			)
 
@@ -120,7 +120,7 @@ describe.each([
 			const result = generateProdSpriteCode(
 				target,
 				preamble,
-				{ viewBox: '0 0 16 16', width: '16', height: '16' },
+				{ width: '16', height: '16' },
 				'_def67890',
 			)
 
@@ -132,13 +132,12 @@ describe.each([
 			const result = generateProdSpriteCode(
 				target,
 				'',
-				{ viewBox: '0 0 48 48', width: '48', height: '48' },
+				{ width: '48', height: '48' },
 				'_test1234',
 			)
 
 			expect(result).toMatchSnapshot()
-			expect(result).toContain("'0 0 48 48'")
-			expect(result).toContain("'48'")
+			expect(result).toContain("48, 48")
 		})
 	})
 })

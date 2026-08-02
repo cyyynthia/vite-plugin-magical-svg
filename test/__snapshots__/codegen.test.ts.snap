@@ -4,9 +4,7 @@ exports[`dom target > generateProdSpriteCode > generates prod-sprite code with p
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -15,9 +13,7 @@ exports[`dom target > generateProdSpriteCode > includes preamble imports 1`] = `
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -25,9 +21,7 @@ exports[`dom target > generateProdSpriteCode > passes viewBox, width, and height
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -35,9 +29,7 @@ exports[`dom target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/dom.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -45,16 +37,13 @@ exports[`dom target > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -66,9 +55,7 @@ exports[`dom target > generates prod-inline code with symbol reference 1`] = `
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -76,9 +63,7 @@ exports[`dom-fn target > generateProdSpriteCode > generates prod-sprite code wit
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom-fn.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -87,9 +72,7 @@ exports[`dom-fn target > generateProdSpriteCode > includes preamble imports 1`] 
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom-fn.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -97,9 +80,7 @@ exports[`dom-fn target > generateProdSpriteCode > passes viewBox, width, and hei
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom-fn.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -107,9 +88,7 @@ exports[`dom-fn target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/dom-fn.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -117,16 +96,13 @@ exports[`dom-fn target > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom-fn.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -138,9 +114,7 @@ exports[`dom-fn target > generates prod-inline code with symbol reference 1`] = 
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom-fn.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -148,9 +122,7 @@ exports[`dom-template target > generateProdSpriteCode > generates prod-sprite co
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom-template.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -159,9 +131,7 @@ exports[`dom-template target > generateProdSpriteCode > includes preamble import
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom-template.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -169,9 +139,7 @@ exports[`dom-template target > generateProdSpriteCode > passes viewBox, width, a
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom-template.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -179,9 +147,7 @@ exports[`dom-template target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/dom-template.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -189,16 +155,13 @@ exports[`dom-template target > generates dev-inline code with inlineSymbol 1`] =
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom-template.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -210,9 +173,7 @@ exports[`dom-template target > generates prod-inline code with symbol reference 
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/dom-template.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -220,9 +181,7 @@ exports[`ember target > generateProdSpriteCode > generates prod-sprite code with
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/ember.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -231,9 +190,7 @@ exports[`ember target > generateProdSpriteCode > includes preamble imports 1`] =
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/ember.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -241,9 +198,7 @@ exports[`ember target > generateProdSpriteCode > passes viewBox, width, and heig
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/ember.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -251,9 +206,7 @@ exports[`ember target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/ember.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -261,16 +214,13 @@ exports[`ember target > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/ember.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -282,9 +232,7 @@ exports[`ember target > generates prod-inline code with symbol reference 1`] = `
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/ember.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -297,9 +245,7 @@ exports[`preact target > generateProdSpriteCode > generates prod-sprite code wit
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/preact.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -308,9 +254,7 @@ exports[`preact target > generateProdSpriteCode > includes preamble imports 1`] 
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/preact.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -318,9 +262,7 @@ exports[`preact target > generateProdSpriteCode > passes viewBox, width, and hei
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/preact.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -328,9 +270,7 @@ exports[`preact target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/preact.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -338,16 +278,13 @@ exports[`preact target > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/preact.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -359,9 +296,7 @@ exports[`preact target > generates prod-inline code with symbol reference 1`] = 
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/preact.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -369,9 +304,7 @@ exports[`preact-jsx target > generateProdSpriteCode > generates prod-sprite code
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/preact-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -380,9 +313,7 @@ exports[`preact-jsx target > generateProdSpriteCode > includes preamble imports 
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/preact-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -390,9 +321,7 @@ exports[`preact-jsx target > generateProdSpriteCode > passes viewBox, width, and
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/preact-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -400,9 +329,7 @@ exports[`preact-jsx target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/preact-jsx.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -410,16 +337,13 @@ exports[`preact-jsx target > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/preact-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -431,9 +355,7 @@ exports[`preact-jsx target > generates prod-inline code with symbol reference 1`
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/preact-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -441,9 +363,7 @@ exports[`react target > generateProdSpriteCode > generates prod-sprite code with
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -452,9 +372,7 @@ exports[`react target > generateProdSpriteCode > includes preamble imports 1`] =
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -462,9 +380,7 @@ exports[`react target > generateProdSpriteCode > passes viewBox, width, and heig
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -472,9 +388,7 @@ exports[`react target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -482,16 +396,13 @@ exports[`react target > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -503,9 +414,7 @@ exports[`react target > generates prod-inline code with symbol reference 1`] = `
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -513,9 +422,7 @@ exports[`react-jsx target > generateProdSpriteCode > generates prod-sprite code 
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -524,9 +431,7 @@ exports[`react-jsx target > generateProdSpriteCode > includes preamble imports 1
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -534,9 +439,7 @@ exports[`react-jsx target > generateProdSpriteCode > passes viewBox, width, and 
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -544,9 +447,7 @@ exports[`react-jsx target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react-jsx.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -554,16 +455,13 @@ exports[`react-jsx target > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -575,9 +473,7 @@ exports[`react-jsx target > generates prod-inline code with symbol reference 1`]
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -585,9 +481,7 @@ exports[`react19 target > generateProdSpriteCode > generates prod-sprite code wi
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react19.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -596,9 +490,7 @@ exports[`react19 target > generateProdSpriteCode > includes preamble imports 1`]
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react19.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -606,9 +498,7 @@ exports[`react19 target > generateProdSpriteCode > passes viewBox, width, and he
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react19.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -616,9 +506,7 @@ exports[`react19 target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react19.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -626,16 +514,13 @@ exports[`react19 target > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react19.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -647,9 +532,7 @@ exports[`react19 target > generates prod-inline code with symbol reference 1`] =
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react19.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -657,9 +540,7 @@ exports[`react19-jsx target > generateProdSpriteCode > generates prod-sprite cod
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react19-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -668,9 +549,7 @@ exports[`react19-jsx target > generateProdSpriteCode > includes preamble imports
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react19-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -678,9 +557,7 @@ exports[`react19-jsx target > generateProdSpriteCode > passes viewBox, width, an
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react19-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -688,9 +565,7 @@ exports[`react19-jsx target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/react19-jsx.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -698,16 +573,13 @@ exports[`react19-jsx target > generates dev-inline code with inlineSymbol 1`] = 
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react19-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -719,9 +591,7 @@ exports[`react19-jsx target > generates prod-inline code with symbol reference 1
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/react19-jsx.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -729,9 +599,7 @@ exports[`solid target > generateProdSpriteCode > generates prod-sprite code with
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/solid.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -740,9 +608,7 @@ exports[`solid target > generateProdSpriteCode > includes preamble imports 1`] =
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/solid.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -750,9 +616,7 @@ exports[`solid target > generateProdSpriteCode > passes viewBox, width, and heig
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/solid.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -760,9 +624,7 @@ exports[`solid target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/solid.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -770,16 +632,13 @@ exports[`solid target > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/solid.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -791,9 +650,7 @@ exports[`solid target > generates prod-inline code with symbol reference 1`] = `
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/solid.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -801,9 +658,7 @@ exports[`vue target > generateProdSpriteCode > generates prod-sprite code with p
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/vue.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -812,9 +667,7 @@ exports[`vue target > generateProdSpriteCode > includes preamble imports 1`] = `
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/vue.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -822,9 +675,7 @@ exports[`vue target > generateProdSpriteCode > passes viewBox, width, and height
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/vue.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -832,9 +683,7 @@ exports[`vue target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/vue.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -842,16 +691,13 @@ exports[`vue target > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/vue.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -863,9 +709,7 @@ exports[`vue target > generates prod-inline code with symbol reference 1`] = `
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/vue.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;
 
@@ -873,9 +717,7 @@ exports[`vue-vapor target > generateProdSpriteCode > generates prod-sprite code 
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/vue-vapor.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___abc12345__, '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
 	"
 `;
 
@@ -884,9 +726,7 @@ exports[`vue-vapor target > generateProdSpriteCode > includes preamble imports 1
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/vue-vapor.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___def67890__, '0 0 16 16' || void 0, '16' || void 0, '16' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
 	"
 `;
 
@@ -894,9 +734,7 @@ exports[`vue-vapor target > generateProdSpriteCode > passes viewBox, width, and 
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/vue-vapor.js';
-		export default /*#__PURE__*/ createSvg(
-			__MAGICAL_SVG_SPRITE___test1234__, '0 0 48 48' || void 0, '48' || void 0, '48' || void 0
-		);
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
 	"
 `;
 
@@ -904,9 +742,7 @@ exports[`vue-vapor target > generates dev code 1`] = `
 "
 
 		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/vue-vapor.js';
-		export default /*#__PURE__*/ createSvgDEV(
-			"<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
 	"
 `;
 
@@ -914,16 +750,13 @@ exports[`vue-vapor target > generates dev-inline code with inlineSymbol 1`] = `
 "
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/vue-vapor.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_63a603ad', '0 0 24 24' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
 	
 
 		;(() => {
 			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 			svg.setAttribute('height', '0')
 			svg.setAttribute('width', '0')
-			svg.setAttribute('viewBox', '0 0 24 24')
 			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
 			document.body.prepend(svg)
 		})();
@@ -935,8 +768,6 @@ exports[`vue-vapor target > generates prod-inline code with symbol reference 1`]
 
 
 		import { createSvg } from 'vite-plugin-magical-svg/runtime/vue-vapor.js';
-		export default /*#__PURE__*/ createSvg(
-			'#_abc12345', '0 0 24 24' || void 0, '' || void 0, '' || void 0
-		);
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
 	"
 `;

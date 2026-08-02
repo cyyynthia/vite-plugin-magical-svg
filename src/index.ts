@@ -154,7 +154,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 	const assets = new Map<string, SvgAsset>()
 
-	type ViewBoxInfo = { viewBox: string, width: string, height: string }
+	type ViewBoxInfo = { width: string, height: string }
 	const viewBoxes = new Map<string, ViewBoxInfo>()
 	const symbolIds = new Map<string, string>()
 
@@ -300,19 +300,20 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 
 				const target = config.target ?? 'dom'
 				const preamble = code.slice(0, exportIndex)
+				const vbox = viewBoxes.get(id)!
 				if (serve) {
 					const asset = assets.get(id)!
 					await hashSymbols(asset.xml.svg)
 
 					if (assetId === 'inline') {
 						return {
-							code: generateDevInlineCode(target, preamble, asset.xml),
+							code: generateDevInlineCode(target, preamble, vbox, asset.xml),
 							map: { mappings: '' }
 						}
 					}
 
 					return {
-						code: generateDevCode(target, preamble, asset.xml),
+						code: generateDevCode(target, preamble, vbox, asset.xml),
 						map: { mappings: '' }
 					}
 				}
@@ -320,7 +321,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				const symbolId = symbolIds.get(id)!
 				if (assetId === 'inline') {
 					return {
-						code: generateProdInlineCode(target, preamble, viewBoxes.get(id)!, symbolId),
+						code: generateProdInlineCode(target, preamble, vbox, symbolId),
 						map: { mappings: '' }
 					}
 				}
@@ -330,7 +331,7 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 				files.set(assetId, generateFilename(fileName, `${assetId}.svg`, asset.sources.sort().join('')))
 
 				return {
-					code: generateProdSpriteCode(target, preamble, viewBoxes.get(id)!, symbolId),
+					code: generateProdSpriteCode(target, preamble, vbox, symbolId),
 					map: { mappings: '' }
 				}
 			}
