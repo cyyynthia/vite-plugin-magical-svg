@@ -713,6 +713,65 @@ exports[`solid target > generates prod-inline code with symbol reference 1`] = `
 	"
 `;
 
+exports[`svelte target > generateProdSpriteCode > generates prod-sprite code with placeholder 1`] = `
+"
+
+		import { createSvg } from 'vite-plugin-magical-svg/runtime/svelte.js';
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___abc12345__, 24, 24);
+	"
+`;
+
+exports[`svelte target > generateProdSpriteCode > includes preamble imports 1`] = `
+"import "/path/to/dep.svg";
+
+
+		import { createSvg } from 'vite-plugin-magical-svg/runtime/svelte.js';
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___def67890__, 16, 16);
+	"
+`;
+
+exports[`svelte target > generateProdSpriteCode > passes viewBox, width, and height to codegen 1`] = `
+"
+
+		import { createSvg } from 'vite-plugin-magical-svg/runtime/svelte.js';
+		export default /*#__PURE__*/ createSvg(__MAGICAL_SVG_SPRITE___test1234__, 48, 48);
+	"
+`;
+
+exports[`svelte target > generates dev code 1`] = `
+"
+
+		import { createSvgDEV } from 'vite-plugin-magical-svg/runtime/svelte.js';
+		export default /*#__PURE__*/ createSvgDEV("<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_c44c3d0e\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol><use href='#_c44c3d0e'/>", 24, 24);
+	"
+`;
+
+exports[`svelte target > generates dev-inline code with inlineSymbol 1`] = `
+"
+
+		import { createSvg } from 'vite-plugin-magical-svg/runtime/svelte.js';
+		export default /*#__PURE__*/ createSvg('#_63a603ad', 24, 24);
+	
+
+		;(() => {
+			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+			svg.setAttribute('height', '0')
+			svg.setAttribute('width', '0')
+			svg.innerHTML = "<symbol xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 24 24\\" id=\\"_63a603ad\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\" fill=\\"#ff0000\\" stroke=\\"#000000\\"/></symbol>"
+			document.body.prepend(svg)
+		})();
+	"
+`;
+
+exports[`svelte target > generates prod-inline code with symbol reference 1`] = `
+"import "./dep.svg";
+
+
+		import { createSvg } from 'vite-plugin-magical-svg/runtime/svelte.js';
+		export default /*#__PURE__*/ createSvg('#_abc12345', 24, 24);
+	"
+`;
+
 exports[`vue target > generateProdSpriteCode > generates prod-sprite code with placeholder 1`] = `
 "
 

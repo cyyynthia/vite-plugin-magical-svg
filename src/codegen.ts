@@ -52,6 +52,7 @@ export type SupportedTarget =
 	| 'solid'
 	| 'ember'
 	| 'raw'
+	| 'svelte'
 
 /** @internal */
 export function generateDev (target: SupportedTarget, width: XmlValue, height: XmlValue, xml: any): string {
