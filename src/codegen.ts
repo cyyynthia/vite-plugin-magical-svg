@@ -51,6 +51,7 @@ export type SupportedTarget =
 	| 'vue-vapor'
 	| 'solid'
 	| 'ember'
+	| 'raw'
 
 /** @internal */
 export function generateDev (target: SupportedTarget, width: XmlValue, height: XmlValue, xml: any): string {

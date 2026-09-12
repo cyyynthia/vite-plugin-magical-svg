@@ -66,6 +66,7 @@ describe.each([
 	'vue-vapor',
 	'solid',
 	'ember',
+	'raw',
 ] as const)('%s target', (target) => {
 	it('generates dev code', async () => {
 		const raw = await readFile(fixture('simple.svg'), 'utf8')

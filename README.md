@@ -98,6 +98,7 @@ export default defineConfig({
 - `vue-vapor`: exports a Vue Vapor[^vapor] component (as if it was a `.vue` file)
 - `solid`: exports a Solid component
 - `ember`: exports an Ember component
+- `raw`: exports an instance of the [`RawSvg`](src/index.ts#L79) interface, including a string to set as the `.innerHTML` of an existing `<svg>` element
 
 [^vapor]: Vue's high-performance subset introduced in Vue 3.6.
 [^oopsie-dom]: This target was supposed to behave as `dom-fn` actually, but I messed up the implementation. To avoid
