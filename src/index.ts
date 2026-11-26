@@ -76,6 +76,12 @@ export type MagicalSvgConfig = {
 	restoreMissingViewBox?: boolean
 }
 
+export interface RawSvg {
+	raw: string;
+	width: string;
+	height: string;
+}
+
 let ROOT = '/'
 const ASSET_RE = /__MAGICAL_SVG_SPRITE__(_[0-9a-f]{8})__/g
 
