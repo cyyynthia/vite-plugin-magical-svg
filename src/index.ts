@@ -382,6 +382,10 @@ export function magicalSvgPlugin (config: MagicalSvgConfig = {}): Plugin {
 					}
 				}
 
+				if (asset.xml.svg['#sprite']) {
+					asset.xml.svg.$$.sort((a: any, b: any) => a.$.id.localeCompare(b.$.id))
+				}
+
 				await transformRefs(asset.xml.svg, async (ref, isFile) => {
 					if (!isFile) {
 						const url = new URL(`file:///${ref}`)
